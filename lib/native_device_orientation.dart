@@ -11,21 +11,21 @@ enum NativeDeviceOrientation {
   unknown
 }
 
-class DeviceOrientationCommunicator {
-  static DeviceOrientationCommunicator _instance;
+class NativeDeviceOrientationCommunicator {
+  static NativeDeviceOrientationCommunicator _instance;
 
   final MethodChannel _methodChannel;
   final EventChannel _eventChannel;
 
   Stream<NativeDeviceOrientation> _onNativeOrientationChanged;
 
-  factory DeviceOrientationCommunicator() {
+  factory NativeDeviceOrientationCommunicator() {
     if (_instance == null) {
       final MethodChannel methodChannel = const MethodChannel(
           'com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
       final EventChannel eventChannel = const EventChannel(
           'com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
-      _instance = new DeviceOrientationCommunicator.private(
+      _instance = new NativeDeviceOrientationCommunicator.private(
           methodChannel, eventChannel);
     }
 
@@ -33,7 +33,7 @@ class DeviceOrientationCommunicator {
   }
 
   @visibleForTesting
-  DeviceOrientationCommunicator.private(
+  NativeDeviceOrientationCommunicator.private(
       this._methodChannel, this._eventChannel);
 
   Future<NativeDeviceOrientation> get orientation async {
@@ -69,8 +69,8 @@ class DeviceOrientationCommunicator {
   }
 }
 
-class DeviceOrientationListener extends StatefulWidget {
-  const DeviceOrientationListener({
+class NativeDeviceOrientationReader extends StatefulWidget {
+  const NativeDeviceOrientationReader({
     Key key,
     @required this.builder,
   }) : super(key: key);
@@ -78,8 +78,8 @@ class DeviceOrientationListener extends StatefulWidget {
   final WidgetBuilder builder;
 
   static NativeDeviceOrientation orientation(BuildContext context) {
-    final _InheritedDeviceOrientation inheritedNativeOrientation =
-        context.inheritFromWidgetOfExactType(_InheritedDeviceOrientation);
+    final _InheritedNativeDeviceOrientation inheritedNativeOrientation =
+        context.inheritFromWidgetOfExactType(_InheritedNativeDeviceOrientation);
 
     assert(() {
       if (inheritedNativeOrientation == null) {
@@ -94,12 +94,12 @@ class DeviceOrientationListener extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => new NativeOrientationBuilderState();
+  State<StatefulWidget> createState() => new NativeDeviceOrientationReaderState();
 }
 
-class NativeOrientationBuilderState extends State<DeviceOrientationListener> {
-  DeviceOrientationCommunicator deviceOrientation =
-      new DeviceOrientationCommunicator();
+class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> {
+  NativeDeviceOrientationCommunicator deviceOrientation =
+      new NativeDeviceOrientationCommunicator();
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,7 @@ class NativeOrientationBuilderState extends State<DeviceOrientationListener> {
         builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
           if (asyncResult.connectionState == ConnectionState.waiting) {
             return new OrientationBuilder(builder: (buildContext, orientation) {
-              return new _InheritedDeviceOrientation(
+              return new _InheritedNativeDeviceOrientation(
                 nativeOrientation: orientation == Orientation.landscape
                     ? NativeDeviceOrientation.landscapeRight
                     : NativeDeviceOrientation.portraitUp,
@@ -117,7 +117,7 @@ class NativeOrientationBuilderState extends State<DeviceOrientationListener> {
               );
             });
           } else {
-            return new _InheritedDeviceOrientation(
+            return new _InheritedNativeDeviceOrientation(
               nativeOrientation: asyncResult.data,
               child: new Builder(builder: widget.builder),
             );
@@ -128,10 +128,10 @@ class NativeOrientationBuilderState extends State<DeviceOrientationListener> {
   }
 }
 
-class _InheritedDeviceOrientation extends InheritedWidget {
+class _InheritedNativeDeviceOrientation extends InheritedWidget {
   final NativeDeviceOrientation nativeOrientation;
 
-  const _InheritedDeviceOrientation({
+  const _InheritedNativeDeviceOrientation({
     Key key,
     @required this.nativeOrientation,
     @required Widget child,
@@ -139,6 +139,6 @@ class _InheritedDeviceOrientation extends InheritedWidget {
         super(key: key, child: child);
 
   @override
-  bool updateShouldNotify(_InheritedDeviceOrientation oldWidget) =>
+  bool updateShouldNotify(_InheritedNativeDeviceOrientation oldWidget) =>
       this.nativeOrientation != oldWidget.nativeOrientation;
 }

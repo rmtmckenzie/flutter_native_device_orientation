@@ -16,10 +16,10 @@ class _MyAppState extends State<MyApp> {
         appBar: new AppBar(
           title: new Text('Native Orientation example app'),
         ),
-        body: new DeviceOrientationListener(
+        body: new NativeDeviceOrientationReader(
           builder: (context) {
             NativeDeviceOrientation orientation =
-                DeviceOrientationListener.orientation(context);
+                NativeDeviceOrientationReader.orientation(context);
             return new Center(
                 child: Text('Native Orientation: ${orientation.toString()}\n'));
           },
