@@ -39,6 +39,9 @@ public class OrientationListener {
         };
 
         context.registerReceiver(broadcastReceiver, orientationIntentFilter);
+
+        // send initial orientation.
+        callback.receive(reader.getOrientation());
     }
 
     public void stopOrientationListener() {

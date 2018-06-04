@@ -45,7 +45,9 @@ class DeviceOrientationCommunicator {
   Stream<NativeDeviceOrientation> get onOrientationChanged {
     if (_onNativeOrientationChanged == null) {
       _onNativeOrientationChanged =
-          _eventChannel.receiveBroadcastStream().map((dynamic event) => event);
+          _eventChannel.receiveBroadcastStream().map((dynamic event) {
+            return _fromString(event);
+          });
     }
     return _onNativeOrientationChanged;
   }
@@ -80,7 +82,7 @@ class DeviceOrientationListener extends StatefulWidget {
         context.inheritFromWidgetOfExactType(_InheritedDeviceOrientation);
 
     assert(() {
-      if (inheritedNativeOrientation != null) {
+      if (inheritedNativeOrientation == null) {
         throw new FlutterError(
             'DeviceOrientationListener.orientation was called but there'
             ' is no DeviceOrientationListener in the context.');

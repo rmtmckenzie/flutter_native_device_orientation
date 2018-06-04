@@ -46,7 +46,6 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        System.out.println("Received method call at " + call.method);
         switch (call.method) {
             case "getOrientation":
                 result.success(reader.getOrientation().name());

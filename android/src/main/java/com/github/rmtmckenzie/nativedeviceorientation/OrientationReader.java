@@ -46,7 +46,6 @@ public class OrientationReader {
                 returnOrientation = Orientation.Unknown;
         }
 
-        System.out.println("From orientation " + orientation + " and rotation " + rotation + " returning " + returnOrientation.name());
         return returnOrientation;
     }
 }
