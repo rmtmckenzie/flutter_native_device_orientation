@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.github.rmtmckenzie.nativedeviceorientation.OrientationListener.OrientationCallback;
+import com.github.rmtmckenzie.nativedeviceorientation.IOrientationListener.OrientationCallback;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -18,7 +18,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventChannel.StreamHandler {
 
-
+    //todo use this to change the sensor used
+    private boolean useSensor = true;
     private static final String METHOD_CHANEL = "com.github.rmtmckenzie/flutter_native_device_orientation/orientation";
     private static final String EVENT_CHANNEL = "com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent";
 
@@ -42,7 +43,7 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
     private final Context context;
     private final OrientationReader reader;
 
-    private OrientationListener listener;
+    private IOrientationListener listener;
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
@@ -57,12 +58,19 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
 
     @Override
     public void onListen(Object o, final EventChannel.EventSink eventSink) {
-        listener = new OrientationListener(reader, context, new OrientationCallback() {
+        // initialize the callback. It is the same for both listeners.
+        IOrientationListener.OrientationCallback callback = new IOrientationListener.OrientationCallback() {
             @Override
             public void receive(OrientationReader.Orientation orientation) {
                 eventSink.success(orientation.name());
             }
-        });
+        };
+
+        if(useSensor){
+            listener = new SensorOrientationListener(reader, context, callback);
+        }else{
+            listener = new OrientationListener(reader, context, callback);
+        }
         listener.startOrientationListener();
     }
 

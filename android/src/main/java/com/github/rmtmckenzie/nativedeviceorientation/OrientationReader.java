@@ -48,4 +48,36 @@ public class OrientationReader {
 
         return returnOrientation;
     }
+
+    public Orientation getSensorOrientation(int angle){
+        Orientation returnOrientation;
+
+        final int tolerance = 45;
+
+        angle += tolerance;
+        angle = angle % 360;
+        int screenOrientation = angle / 90;
+
+
+        switch (screenOrientation){
+            case 0:
+                returnOrientation = Orientation.PortraitUp;
+                break;
+            case 1:
+                returnOrientation = Orientation.LandscapeRight;
+                break;
+            case 2:
+                returnOrientation = Orientation.PortraitDown;
+                break;
+            case 3:
+                returnOrientation = Orientation.LandscapeLeft;
+                break;
+
+            default:
+                returnOrientation = Orientation.Unknown;
+
+        }
+
+        return  returnOrientation;
+    }
 }
