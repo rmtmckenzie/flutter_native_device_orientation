@@ -1,14 +1,7 @@
 package com.github.rmtmckenzie.nativedeviceorientation;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.SensorManager;
-
-import com.github.rmtmckenzie.nativedeviceorientation.IOrientationListener.OrientationCallback;
-
 import java.util.Map;
-
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -47,13 +40,21 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
     private IOrientationListener listener;
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case "getOrientation":
                 boolean useSensor = call.argument("useSensor");
 
                 if(useSensor){
-                    result.success(reader.getSensorOrientation().name());
+                    // we can't immediately retrieve a orientation from the sensor. We have to start listening
+                    // and return the first orientation retrieved.
+                    reader.getSensorOrientation(new IOrientationListener.OrientationCallback(){
+
+                        @Override
+                        public void receive(OrientationReader.Orientation orientation) {
+                            result.success(orientation.name());
+                        }
+                    });
                 }else{
                     result.success(reader.getOrientation().name());
                 }

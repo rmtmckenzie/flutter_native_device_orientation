@@ -4,10 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.SensorManager;
-import android.view.OrientationEventListener;
-
-import io.flutter.plugin.common.EventChannel;
 
 public class OrientationListener implements IOrientationListener{
 

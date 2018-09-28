@@ -6,7 +6,7 @@ public interface IOrientationListener {
         void receive(OrientationReader.Orientation orientation);
     }
 
-    public void startOrientationListener();
+    void startOrientationListener();
 
-    public void stopOrientationListener();
+    void stopOrientationListener();
 }

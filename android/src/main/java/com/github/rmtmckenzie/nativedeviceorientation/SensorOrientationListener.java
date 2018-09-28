@@ -30,9 +30,6 @@ public class SensorOrientationListener implements IOrientationListener {
         if(orientationEventListener.canDetectOrientation()){
             orientationEventListener.enable();
         }
-
-        // send initial orientation.
-        callback.receive(reader.getOrientation());
     }
 
     @Override
