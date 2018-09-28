@@ -2,6 +2,8 @@ package com.github.rmtmckenzie.nativedeviceorientation;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.hardware.SensorManager;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.WindowManager;
 
@@ -49,7 +51,14 @@ public class OrientationReader {
         return returnOrientation;
     }
 
-    public Orientation getSensorOrientation(int angle){
+    public Orientation getSensorOrientation(){
+        float[] rotationMatrix = new float[9];
+        float[] values = new float[3];
+        float[] test=  SensorManager.getOrientation(rotationMatrix, values);
+        return Orientation.Unknown;
+    }
+
+    public Orientation calculateSensorOrientation(int angle){
         Orientation returnOrientation;
 
         final int tolerance = 45;

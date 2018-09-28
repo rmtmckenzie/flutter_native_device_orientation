@@ -3,51 +3,48 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-enum NativeDeviceOrientation {
-  portraitUp,
-  portraitDown,
-  landscapeLeft,
-  landscapeRight,
-  unknown
-}
+enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
 
 class NativeDeviceOrientationCommunicator {
   static NativeDeviceOrientationCommunicator _instance;
 
   final MethodChannel _methodChannel;
   final EventChannel _eventChannel;
+  final bool _useSensor;
 
   Stream<NativeDeviceOrientation> _onNativeOrientationChanged;
 
-  factory NativeDeviceOrientationCommunicator() {
+  factory NativeDeviceOrientationCommunicator({bool useSensor = false}) {
     if (_instance == null) {
-      final MethodChannel methodChannel = const MethodChannel(
-          'com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
-      final EventChannel eventChannel = const EventChannel(
-          'com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
-      _instance = new NativeDeviceOrientationCommunicator.private(
-          methodChannel, eventChannel);
+      final MethodChannel methodChannel =
+          const MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
+      final EventChannel eventChannel =
+          const EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
+      _instance = new NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel, useSensor);
     }
 
     return _instance;
   }
 
   @visibleForTesting
-  NativeDeviceOrientationCommunicator.private(
-      this._methodChannel, this._eventChannel);
+  NativeDeviceOrientationCommunicator.private(this._methodChannel, this._eventChannel, this._useSensor);
 
   Future<NativeDeviceOrientation> get orientation async {
-    final String orientation =
-        await _methodChannel.invokeMethod('getOrientation');
+    final Map<String, dynamic> params = <String, dynamic>{
+      'useSensor': _useSensor,
+    };
+    final String orientation = await _methodChannel.invokeMethod('getOrientation', params);
     return _fromString(orientation);
   }
 
   Stream<NativeDeviceOrientation> get onOrientationChanged {
     if (_onNativeOrientationChanged == null) {
-      _onNativeOrientationChanged =
-          _eventChannel.receiveBroadcastStream().map((dynamic event) {
-            return _fromString(event);
-          });
+      final Map<String, dynamic> params = <String, dynamic>{
+        'useSensor': _useSensor,
+      };
+      _onNativeOrientationChanged = _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
+        return _fromString(event);
+      });
     }
     return _onNativeOrientationChanged;
   }
@@ -72,10 +69,12 @@ class NativeDeviceOrientationCommunicator {
 class NativeDeviceOrientationReader extends StatefulWidget {
   const NativeDeviceOrientationReader({
     Key key,
+    this.useSensor = false,
     @required this.builder,
   }) : super(key: key);
 
   final WidgetBuilder builder;
+  final bool useSensor;
 
   static NativeDeviceOrientation orientation(BuildContext context) {
     final _InheritedNativeDeviceOrientation inheritedNativeOrientation =
@@ -83,8 +82,7 @@ class NativeDeviceOrientationReader extends StatefulWidget {
 
     assert(() {
       if (inheritedNativeOrientation == null) {
-        throw new FlutterError(
-            'DeviceOrientationListener.orientation was called but there'
+        throw new FlutterError('DeviceOrientationListener.orientation was called but there'
             ' is no DeviceOrientationListener in the context.');
       }
       return true;
@@ -98,11 +96,13 @@ class NativeDeviceOrientationReader extends StatefulWidget {
 }
 
 class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> {
-  NativeDeviceOrientationCommunicator deviceOrientation =
-      new NativeDeviceOrientationCommunicator();
+//  NativeDeviceOrientationCommunicator deviceOrientation = new NativeDeviceOrientationCommunicator();
 
   @override
   Widget build(BuildContext context) {
+    NativeDeviceOrientationCommunicator deviceOrientation =
+        new NativeDeviceOrientationCommunicator(useSensor: widget.useSensor);
+
     return new LayoutBuilder(builder: (context, constraints) {
       return new StreamBuilder(
         stream: deviceOrientation.onOrientationChanged,

@@ -3,8 +3,11 @@ package com.github.rmtmckenzie.nativedeviceorientation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.SensorManager;
 
 import com.github.rmtmckenzie.nativedeviceorientation.IOrientationListener.OrientationCallback;
+
+import java.util.Map;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -18,8 +21,6 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventChannel.StreamHandler {
 
-    //todo use this to change the sensor used
-    private boolean useSensor = true;
     private static final String METHOD_CHANEL = "com.github.rmtmckenzie/flutter_native_device_orientation/orientation";
     private static final String EVENT_CHANNEL = "com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent";
 
@@ -49,7 +50,14 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
             case "getOrientation":
-                result.success(reader.getOrientation().name());
+                boolean useSensor = call.argument("useSensor");
+
+                if(useSensor){
+                    result.success(reader.getSensorOrientation().name());
+                }else{
+                    result.success(reader.getOrientation().name());
+                }
+
                 break;
             default:
                 result.notImplemented();
@@ -57,7 +65,17 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
     }
 
     @Override
-    public void onListen(Object o, final EventChannel.EventSink eventSink) {
+    public void onListen(Object parameters, final EventChannel.EventSink eventSink) {
+        boolean useSensor = false;
+        // used hashMap to send parameters to this method. This makes it easier in the future to add new parameters if needed.
+        if(parameters instanceof Map){
+            Map params = (Map) parameters;
+
+            if(params.containsKey("useSensor")){
+                useSensor = (Boolean) params.get("useSensor");
+            }
+        }
+
         // initialize the callback. It is the same for both listeners.
         IOrientationListener.OrientationCallback callback = new IOrientationListener.OrientationCallback() {
             @Override

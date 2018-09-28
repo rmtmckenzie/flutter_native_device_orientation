@@ -24,7 +24,7 @@ public class SensorOrientationListener implements IOrientationListener {
         orientationEventListener = new OrientationEventListener(context, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int angle) {
-                callback.receive(reader.getSensorOrientation(angle));
+                callback.receive(reader.calculateSensorOrientation(angle));
             }
         };
         if(orientationEventListener.canDetectOrientation()){
