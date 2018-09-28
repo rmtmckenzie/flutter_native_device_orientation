@@ -53,6 +53,9 @@ public class OrientationReader {
 
     public void getSensorOrientation(final IOrientationListener.OrientationCallback callback) {
         // We can't get the orientation of the device directly. We have to listen to the orientation and immediately return the orientation and cancel this listener.
+
+        // if the OrientationListener isn't null, we are already requesting the getSensorOrientation. Firing it multiple times could cause problems.
+        if(orientationListener != null) return;
         orientationListener = new SensorOrientationListener(new OrientationReader(context), context, new IOrientationListener.OrientationCallback() {
 
             @Override
