@@ -74,9 +74,18 @@ public class OrientationReader {
 
         final int tolerance = 45;
         angle += tolerance;
+
+        // orientation is 0 in the default orientation mode. This is portait-mode for phones
+        // and landscape for tablets. We have to compensate this by calculating the default orientation,
+        // and applying an offset.
+        int defaultDeviceOrientation = getDeviceDefaultOrientation();
+        if(defaultDeviceOrientation == Configuration.ORIENTATION_LANDSCAPE){
+            // add offset to landscape
+            angle += 90;
+        }
+
         angle = angle % 360;
         int screenOrientation = angle / 90;
-
 
         switch (screenOrientation) {
             case 0:
@@ -98,5 +107,23 @@ public class OrientationReader {
         }
 
         return returnOrientation;
+    }
+
+    public int getDeviceDefaultOrientation() {
+
+        WindowManager windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        Configuration config = context.getResources().getConfiguration();
+
+        int rotation = windowManager.getDefaultDisplay().getRotation();
+
+        if ( ((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
+                config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) &&
+                config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
+            return Configuration.ORIENTATION_LANDSCAPE;
+        } else {
+            return Configuration.ORIENTATION_PORTRAIT;
+        }
     }
 }
