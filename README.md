@@ -1,5 +1,7 @@
 # Native Device Orientation
 
+![pub package][version_badge]
+
 This is a plugin project that allows for getting the native device orientation.
 
 ## Why?
@@ -50,3 +52,7 @@ This can be called to get the orientation asynchronously.
 This can be called to get a stream which receives new events whenever the 
 orientation changes. It should also get an initial value pretty much
 immediately.
+
+
+
+[version_badge]: https://img.shields.io/pub/v/native_device_orientation.svg
