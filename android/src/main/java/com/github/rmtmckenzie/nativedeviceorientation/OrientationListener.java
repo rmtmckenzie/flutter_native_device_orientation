@@ -4,12 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.SensorManager;
-import android.view.OrientationEventListener;
 
-import io.flutter.plugin.common.EventChannel;
-
-public class OrientationListener {
+public class OrientationListener implements IOrientationListener{
 
     private static final IntentFilter orientationIntentFilter = new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED);
 
@@ -17,10 +13,6 @@ public class OrientationListener {
     private final Context context;
     private final OrientationCallback callback;
     private BroadcastReceiver broadcastReceiver;
-
-    interface OrientationCallback {
-        void receive(OrientationReader.Orientation orientation);
-    }
 
     public OrientationListener(OrientationReader reader, Context context, OrientationCallback callback) {
         this.reader = reader;
