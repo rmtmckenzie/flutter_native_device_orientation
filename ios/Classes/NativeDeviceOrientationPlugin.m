@@ -9,6 +9,8 @@ NSString* const PORTRAIT_DOWN = @"PortraitDown";
 NSString* const LANDSCAPE_LEFT = @"LandscapeLeft";
 NSString* const LANDSCAPE_RIGHT = @"LandscapeRight";
 NSString* const UNKNOWN = @"Unknown";
+// used to return the last known orientation instead of FaceUp or FaceDown
+UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
 
 @interface NativeDeviceOrientationPlugin ()
 @property id observer;
@@ -29,20 +31,27 @@ NSString* const UNKNOWN = @"Unknown";
 }
 
 - (NSString*)getOrientation {
-    switch ([UIApplication sharedApplication].statusBarOrientation) {
-            case UIInterfaceOrientationPortrait:
+    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+    
+    // exta check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
+    if(deviceOrientation != UIDeviceOrientationFaceDown && deviceOrientation != UIDeviceOrientationFaceUp) {
+        lastDeviceOrientation = deviceOrientation;
+    }
+    
+    switch (lastDeviceOrientation) {
+        case UIDeviceOrientationPortrait:
             return PORTRAIT_UP;
             break;
-            case UIInterfaceOrientationPortraitUpsideDown:
+        case UIDeviceOrientationPortraitUpsideDown:
             return PORTRAIT_DOWN;
             break;
-            case UIInterfaceOrientationLandscapeLeft:
+        case UIDeviceOrientationLandscapeLeft:
             return LANDSCAPE_LEFT;
             break;
-            case UIInterfaceOrientationLandscapeRight:
+        case UIDeviceOrientationLandscapeRight:
             return LANDSCAPE_RIGHT;
             break;
-            case UIInterfaceOrientationUnknown:
+        case UIDeviceOrientationUnknown:
         default:
             return UNKNOWN;
             break;
