@@ -8,6 +8,6 @@
 
 * Fix name of package
 
-## [0.0.3] - January 2, 2019
+## [0.0.4] - January 2, 2019
 
 * Switch to using UIDeviceOrientation on iOS
