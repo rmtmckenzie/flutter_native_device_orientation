@@ -64,6 +64,8 @@ UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
     
     if ([@"getOrientation" isEqualToString:call.method]) {
         result([self getOrientation]);
+        
+        //todo implement getOrientation for useSensor = true
     } else if([@"pause" isEqualToString:call.method]){
         [self pause];
         result(NULL);
@@ -76,6 +78,7 @@ UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
 }
 
 - (void) pause{
+
     
 }
 
@@ -89,6 +92,53 @@ void initMotionManager() {
     }
 }
 
+- (void)startDeviceMotionUpdates:(FlutterEventSink _Nonnull)events {
+    initMotionManager();
+    if([motionManager isDeviceMotionAvailable] == YES){
+        motionManager.deviceMotionUpdateInterval = 0.1;
+        [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
+            
+            NSString *orientation;
+            if(fabs(data.gravity.x)>fabs(data.gravity.y)){
+                // we are in landscape-mode
+                if(data.gravity.x>=0){
+                    NSLog(@"LandscapeRight");
+                    orientation = LANDSCAPE_RIGHT;
+                }
+                else{
+                    NSLog(@"LandscapeLeft");
+                    orientation = LANDSCAPE_LEFT;
+                }
+            }
+            else{
+                // we are in portrait mode
+                if(data.gravity.y>=0){
+                    NSLog(@"PortraitDown");
+                    orientation = PORTRAIT_DOWN;
+                }
+                else{
+                    
+                    NSLog(@"PortraitUp");
+                    orientation = PORTRAIT_UP;
+                }
+                
+            }
+            events(orientation);
+            
+        }];
+    }
+}
+
+- (void)startOrientationUpdates:(FlutterEventSink _Nonnull)events {
+    UIDevice *device = [UIDevice currentDevice];
+    [device beginGeneratingDeviceOrientationNotifications];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        events([self getOrientation]);
+    }];
+    events([self getOrientation]);
+}
+
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
     NSDictionary *args = arguments;
@@ -98,52 +148,12 @@ void initMotionManager() {
     }
     
     if(useSensor){
-        initMotionManager();
-        if([motionManager isDeviceMotionAvailable] == YES){
-            motionManager.deviceMotionUpdateInterval = 0.1;
-            [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
-                
-                NSString *orientation;
-                if(fabs(data.gravity.x)>fabs(data.gravity.y)){
-                    // we are in landscape-mode
-                    if(data.gravity.x>=0){
-                        NSLog(@"LandscapeRight");
-                        orientation = LANDSCAPE_RIGHT;
-                    }
-                    else{
-                        NSLog(@"LandscapeLeft");
-                        orientation = LANDSCAPE_LEFT;
-                    }
-                }
-                else{
-                    // we are in portrait mode
-                    if(data.gravity.y>=0){
-                        NSLog(@"PortraitDown");
-                        orientation = PORTRAIT_DOWN;
-                    }
-                    else{
-                        
-                        NSLog(@"PortraitUp");
-                        orientation = PORTRAIT_UP;
-                    }
-                    
-                }
-                events(orientation);
-                
-            }];
-        }
+        [self startDeviceMotionUpdates:events];
 
         
     }else{
         
-    
-        UIDevice *device = [UIDevice currentDevice];
-        [device beginGeneratingDeviceOrientationNotifications];
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-            events([self getOrientation]);
-        }];
-        events([self getOrientation]);
+        [self startOrientationUpdates:events];
         
     }
     
@@ -157,6 +167,13 @@ void stopDeviceMotionUpdates(){
 }
 
 
+- (void)stopOrientationUpdates:(NSNotificationCenter *)nc {
+    UIDevice *device = [UIDevice currentDevice];
+    [device endGeneratingDeviceOrientationNotifications];
+    [nc removeObserver:self.observer];
+    self.observer = NULL;
+}
+
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     
@@ -169,10 +186,7 @@ void stopDeviceMotionUpdates(){
     if(useSensor){
         stopDeviceMotionUpdates();
     }else if (self.observer != NULL) {
-        UIDevice *device = [UIDevice currentDevice];
-        [device endGeneratingDeviceOrientationNotifications];
-        [nc removeObserver:self.observer];
-        self.observer = NULL;
+        [self stopOrientationUpdates:nc];
     }
     
     
