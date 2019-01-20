@@ -62,10 +62,25 @@ UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
     
     if ([@"getOrientation" isEqualToString:call.method]) {
         result([self getOrientation]);
-    } else {
+    } else if([@"pause" isEqualToString:call.method]){
+        [self pause];
+        result(NULL);
+    }else if([@"resume" isEqualToString:call.method]){
+        [self resume];
+        result(NULL);
+    }else {
         result(FlutterMethodNotImplemented);
     }
 }
+
+- (void) pause{
+    
+}
+
+- (void) resume{
+    
+}
+
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
