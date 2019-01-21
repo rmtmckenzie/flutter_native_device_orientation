@@ -12,6 +12,7 @@ id<IOrientationListener> listener;
 
 @interface NativeDeviceOrientationPlugin ()
 @property id observer;
+@property (copy) void (^orientationRetrieved)(NSString *orientation);
 @end
 
 @implementation NativeDeviceOrientationPlugin
@@ -71,10 +72,7 @@ id<IOrientationListener> listener;
 - (void) resume{
     // resume the listener
     if(listener != NULL){
-        [listener startOrientationListener:^(NSString *orientation) {
-            //todo sent back events to the listener
-            
-        }];
+        [listener startOrientationListener:_orientationRetrieved];
     }
 }
 
@@ -91,9 +89,10 @@ id<IOrientationListener> listener;
     }else{
         listener = [[OrientationListener alloc] init];
     }
-    [listener startOrientationListener:^(NSString *orientation) {
+    _orientationRetrieved = ^(NSString *orientation){
         events(orientation);
-    }];
+    };
+    [listener startOrientationListener:_orientationRetrieved];
     
     return NULL;
 }
@@ -106,105 +105,3 @@ id<IOrientationListener> listener;
 }
 
 @end
-
-//- (NSString*)getOrientation {
-//    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-//
-//    // exta check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
-//    if(deviceOrientation != UIDeviceOrientationFaceDown && deviceOrientation != UIDeviceOrientationFaceUp) {
-//        lastDeviceOrientation = deviceOrientation;
-//    }
-//
-//    switch (lastDeviceOrientation) {
-//        case UIDeviceOrientationPortrait:
-//            return PORTRAIT_UP;
-//            break;
-//        case UIDeviceOrientationPortraitUpsideDown:
-//            return PORTRAIT_DOWN;
-//            break;
-//        case UIDeviceOrientationLandscapeLeft:
-//            return LANDSCAPE_LEFT;
-//            break;
-//        case UIDeviceOrientationLandscapeRight:
-//            return LANDSCAPE_RIGHT;
-//            break;
-//        case UIDeviceOrientationUnknown:
-//        default:
-//            return UNKNOWN;
-//            break;
-//    }
-//}
-
-//void initMotionManager() {
-//    if (!motionManager) {
-//        motionManager = [[CMMotionManager alloc] init];
-//    }
-//}
-
-//- (void)startDeviceMotionUpdates:(FlutterEventSink _Nonnull)events {
-//    initMotionManager();
-//    if([motionManager isDeviceMotionAvailable] == YES){
-//        motionManager.deviceMotionUpdateInterval = 0.1;
-//        [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
-//
-//            NSString *orientation;
-//            if(fabs(data.gravity.x)>fabs(data.gravity.y)){
-//                // we are in landscape-mode
-//                if(data.gravity.x>=0){
-//                    NSLog(@"LandscapeRight");
-//                    orientation = LANDSCAPE_RIGHT;
-//                }
-//                else{
-//                    NSLog(@"LandscapeLeft");
-//                    orientation = LANDSCAPE_LEFT;
-//                }
-//            }
-//            else{
-//                // we are in portrait mode
-//                if(data.gravity.y>=0){
-//                    NSLog(@"PortraitDown");
-//                    orientation = PORTRAIT_DOWN;
-//                }
-//                else{
-//
-//                    NSLog(@"PortraitUp");
-//                    orientation = PORTRAIT_UP;
-//                }
-//
-//            }
-//            events(orientation);
-//
-//        }];
-//    }
-//}
-
-//- (void)startOrientationUpdates:(FlutterEventSink _Nonnull)events {
-//    UIDevice *device = [UIDevice currentDevice];
-//    [device beginGeneratingDeviceOrientationNotifications];
-//    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-//    self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-//        events([self getOrientation]);
-//    }];
-//    events([self getOrientation]);
-//}
-
-
-//void stopDeviceMotionUpdates(){
-//    if (motionManager != NULL && [motionManager isGyroActive] == YES) {
-//        [motionManager stopDeviceMotionUpdates];
-//    }
-//}
-
-
-//- (void)stopOrientationUpdates:(NSNotificationCenter *)nc {
-//    UIDevice *device = [UIDevice currentDevice];
-//    [device endGeneratingDeviceOrientationNotifications];
-//    [nc removeObserver:self.observer];
-//    self.observer = NULL;
-//}
-
-
-
-
-
-

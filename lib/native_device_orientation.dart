@@ -53,8 +53,6 @@ Future<void> resume() async{
         'useSensor': _useSensor,
       };
       _onNativeOrientationChanged = _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
-        print("new orientation received");
-
         return _fromString(event);
       });
     }

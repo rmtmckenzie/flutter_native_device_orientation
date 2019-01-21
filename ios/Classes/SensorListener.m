@@ -20,23 +20,18 @@ void initMotionManager() {
             if(fabs(data.gravity.x)>fabs(data.gravity.y)){
                 // we are in landscape-mode
                 if(data.gravity.x>=0){
-                    NSLog(@"LandscapeRight");
                     orientation = LANDSCAPE_RIGHT;
                 }
                 else{
-                    NSLog(@"LandscapeLeft");
                     orientation = LANDSCAPE_LEFT;
                 }
             }
             else{
                 // we are in portrait mode
                 if(data.gravity.y>=0){
-                    NSLog(@"PortraitDown");
                     orientation = PORTRAIT_DOWN;
                 }
                 else{
-                    
-                    NSLog(@"PortraitUp");
                     orientation = PORTRAIT_UP;
                 }
                 
