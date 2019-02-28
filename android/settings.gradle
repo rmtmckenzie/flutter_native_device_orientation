@@ -1,1 +1,3 @@
 rootProject.name = 'native_device_orientation'
+android.enableJetifier=true
+android.useAndroidX=true
