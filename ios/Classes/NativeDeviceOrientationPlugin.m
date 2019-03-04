@@ -1,22 +1,22 @@
 #import "NativeDeviceOrientationPlugin.h"
+#import "SensorListener.h"
+#import "OrientationListener.h"
+#import "IOrientationListener.h"
 
 NSString* const METHOD_CHANEL = @"com.github.rmtmckenzie/flutter_native_device_orientation/orientation";
 NSString* const EVENT_CHANNEL = @"com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent";
 
 
-NSString* const PORTRAIT_UP = @"PortraitUp";
-NSString* const PORTRAIT_DOWN = @"PortraitDown";
-NSString* const LANDSCAPE_LEFT = @"LandscapeLeft";
-NSString* const LANDSCAPE_RIGHT = @"LandscapeRight";
-NSString* const UNKNOWN = @"Unknown";
-// used to return the last known orientation instead of FaceUp or FaceDown
-UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
+//CMMotionManager* motionManager;
+id<IOrientationListener> listener;
 
 @interface NativeDeviceOrientationPlugin ()
 @property id observer;
+@property (copy) void (^orientationRetrieved)(NSString *orientation);
 @end
 
 @implementation NativeDeviceOrientationPlugin
+
 
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -30,66 +30,77 @@ UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
     [eventChannel setStreamHandler:instance];
 }
 
-- (NSString*)getOrientation {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    
-    // exta check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
-    if(deviceOrientation != UIDeviceOrientationFaceDown && deviceOrientation != UIDeviceOrientationFaceUp) {
-        lastDeviceOrientation = deviceOrientation;
-    }
-    
-    switch (lastDeviceOrientation) {
-        case UIDeviceOrientationPortrait:
-            return PORTRAIT_UP;
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            return PORTRAIT_DOWN;
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            return LANDSCAPE_LEFT;
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            return LANDSCAPE_RIGHT;
-            break;
-        case UIDeviceOrientationUnknown:
-        default:
-            return UNKNOWN;
-            break;
-    }
-}
-
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     
     if ([@"getOrientation" isEqualToString:call.method]) {
-        result([self getOrientation]);
-    } else {
+        NSDictionary *args = call.arguments;
+        _Bool useSensor = false;
+        if(args != NULL){
+            useSensor = args[@"useSensor"];
+        }
+        
+        if(useSensor){
+            SensorListener* sensorListener = [SensorListener alloc];
+            [sensorListener getOrientation:^(NSString *orientation) {
+                result(orientation);
+            }];
+        }else{
+            OrientationListener* orientationListener = [OrientationListener alloc];
+            [orientationListener getOrientation:^(NSString *orientation) {
+                result(orientation);
+            }];
+        }
+        
+    } else if([@"pause" isEqualToString:call.method]){
+        [self pause];
+        result(NULL);
+    }else if([@"resume" isEqualToString:call.method]){
+        [self resume];
+        result(NULL);
+    }else {
         result(FlutterMethodNotImplemented);
+    }
+}
+
+- (void) pause{
+    // pause the listener
+    if(listener != NULL){
+        [listener stopOrientationListener];
+    }
+}
+
+- (void) resume{
+    // resume the listener
+    if(listener != NULL){
+        [listener startOrientationListener:_orientationRetrieved];
     }
 }
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(FlutterEventSink)events {
-    UIDevice *device = [UIDevice currentDevice];
-    [device beginGeneratingDeviceOrientationNotifications];
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-        events([self getOrientation]);
-    }];
-    events([self getOrientation]);
+    NSDictionary *args = arguments;
+    _Bool useSensor = false;
+    if(args != NULL){
+        useSensor = args[@"useSensor"];
+    }
+    
+    if(useSensor){
+        listener =[[SensorListener alloc] init];
+    }else{
+        listener = [[OrientationListener alloc] init];
+    }
+    _orientationRetrieved = ^(NSString *orientation){
+        events(orientation);
+    };
+    [listener startOrientationListener:_orientationRetrieved];
+    
     return NULL;
 }
 
-
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    
-    if (self.observer != NULL) {
-        UIDevice *device = [UIDevice currentDevice];
-        [device endGeneratingDeviceOrientationNotifications];
-        [nc removeObserver:self.observer];
-        self.observer = NULL;
+    if(listener != NULL){
+        [listener stopOrientationListener];
     }
-    
     return NULL;
 }
 

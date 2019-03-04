@@ -59,9 +59,32 @@ public class NativeDeviceOrientationPlugin implements MethodCallHandler, EventCh
                     result.success(reader.getOrientation().name());
                 }
 
+            case "pause":
+                pause();
+                result.success(null);
+                break;
+
+            case "resume":
+                resume();
+                result.success(null);
                 break;
             default:
                 result.notImplemented();
+        }
+    }
+
+
+    private void pause(){
+        // if a listener is currently active, stop listening. The app is going to the background
+        if(listener != null){
+            listener.stopOrientationListener();
+        }
+    }
+
+    private void resume(){
+        // start listening for orientation changes again. The app is in the foreground.
+        if(listener != null){
+            listener.startOrientationListener();
         }
     }
 
