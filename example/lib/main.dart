@@ -9,20 +9,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool useSensor = false;
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
           title: new Text('Native Orientation example app'),
+          actions: <Widget>[Switch(value: useSensor, onChanged: (val) => setState(() => useSensor = val))],
         ),
-        body: new NativeDeviceOrientationReader(
+        body: NativeDeviceOrientationReader(
           builder: (context) {
-            NativeDeviceOrientation orientation =
-                NativeDeviceOrientationReader.orientation(context);
-            return new Center(
-                child: Text('Native Orientation: ${orientation.toString()}\n'));
+            NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
+            return Center(child: Text('Native Orientation: ${orientation.toString()}\n'));
           },
+          useSensor: useSensor,
         ),
       ),
     );

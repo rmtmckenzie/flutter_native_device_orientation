@@ -5,58 +5,66 @@ import 'package:flutter/widgets.dart';
 
 enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
 
+class _OrientationStream {
+  final Stream<NativeDeviceOrientation> stream;
+  final bool useSensor;
+
+  _OrientationStream({@required this.stream, @required this.useSensor});
+}
+
 class NativeDeviceOrientationCommunicator {
   static NativeDeviceOrientationCommunicator _instance;
 
   final MethodChannel _methodChannel;
   final EventChannel _eventChannel;
-  final bool _useSensor;
 
-  Stream<NativeDeviceOrientation> _onNativeOrientationChanged;
+  _OrientationStream _stream;
 
-  factory NativeDeviceOrientationCommunicator({bool useSensor = false}) {
+  factory NativeDeviceOrientationCommunicator() {
     if (_instance == null) {
       final MethodChannel methodChannel =
           const MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
       final EventChannel eventChannel =
           const EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
-      _instance = new NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel, useSensor);
+      _instance = new NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel);
     }
 
     return _instance;
   }
 
   @visibleForTesting
-  NativeDeviceOrientationCommunicator.private(this._methodChannel, this._eventChannel, this._useSensor);
+  NativeDeviceOrientationCommunicator.private(this._methodChannel, this._eventChannel);
 
-  Future<NativeDeviceOrientation> get orientation async {
+  Future<NativeDeviceOrientation> orientation({bool useSensor = false}) async {
     final Map<String, dynamic> params = <String, dynamic>{
-      'useSensor': _useSensor,
+      'useSensor': useSensor,
     };
     final String orientation = await _methodChannel.invokeMethod('getOrientation', params);
     return _fromString(orientation);
   }
 
   // these methods are needed to pause listening to sensorRequests when the app goes to background
-  Future<void> pause() async{
+  Future<void> pause() async {
     await _methodChannel.invokeMethod('pause');
-}
+  }
 
-// this method resumes listening to sensorEvents when the app goes to the foreground
-Future<void> resume() async{
+  // this method resumes listening to sensorEvents when the app goes to the foreground
+  Future<void> resume() async {
     await _methodChannel.invokeMethod('resume');
-}
+  }
 
-  Stream<NativeDeviceOrientation> get onOrientationChanged {
-    if (_onNativeOrientationChanged == null) {
+  Stream<NativeDeviceOrientation> onOrientationChanged({bool useSensor = false}) {
+    if (_stream == null || _stream.useSensor != useSensor) {
       final Map<String, dynamic> params = <String, dynamic>{
-        'useSensor': _useSensor,
+        'useSensor': useSensor,
       };
-      _onNativeOrientationChanged = _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
-        return _fromString(event);
-      });
+      _stream = _OrientationStream(
+          stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
+            return _fromString(event);
+          }),
+          useSensor: useSensor);
     }
-    return _onNativeOrientationChanged;
+    return _stream.stream;
   }
 
   NativeDeviceOrientation _fromString(String orientationString) {
@@ -106,7 +114,7 @@ class NativeDeviceOrientationReader extends StatefulWidget {
 }
 
 class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> with WidgetsBindingObserver {
-  NativeDeviceOrientationCommunicator deviceOrientation;
+  NativeDeviceOrientationCommunicator deviceOrientationCommunicator = NativeDeviceOrientationCommunicator();
 
   @override
   void initState() {
@@ -124,37 +132,31 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // we need to listen to the state of the application.
     // we shouldn't listen to orientation events when the app is in the background.
-    switch(state){
+    switch (state) {
       case AppLifecycleState.inactive:
         // Another app has focus, for example because the control center is opened,
-      // or we have opened teh app as a split-screen app. The app however might still be visible.
-      // we would still like to retrieve orientationChanges
+        // or we have opened the app as a split-screen app. The app however might still be visible.
+        // we would still like to retrieve orientationChanges
         break;
       case AppLifecycleState.paused:
         // pause the listener
-        deviceOrientation.pause();
+        deviceOrientationCommunicator.pause();
         break;
       case AppLifecycleState.resumed:
         // resume the listener
-      deviceOrientation.resume();
+        deviceOrientationCommunicator.resume();
         break;
       case AppLifecycleState.suspending:
-        // unused on iOS on Android the app will be suspbended.
+        // unused on iOS on Android the app will be suspended.
         break;
     }
-
-
   }
-
 
   @override
   Widget build(BuildContext context) {
-    deviceOrientation =
-        new NativeDeviceOrientationCommunicator(useSensor: widget.useSensor);
-
     return new LayoutBuilder(builder: (context, constraints) {
       return new StreamBuilder(
-        stream: deviceOrientation.onOrientationChanged,
+        stream: deviceOrientationCommunicator.onOrientationChanged(useSensor: widget.useSensor),
         builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
           if (asyncResult.connectionState == ConnectionState.waiting) {
             return new OrientationBuilder(builder: (buildContext, orientation) {
