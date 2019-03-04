@@ -11,3 +11,10 @@
 ## [0.0.4] - January 2, 2019
 
 * Switch to using UIDeviceOrientation on iOS
+
+## [0.1.0] - March 4, 2019
+
+* Integrate PRs updating to AndroidX and implementing useSensor
+Also made a few changes to do with UseSensor so be careful of that
+if you're using the NativeDeviceOrientationCommunicator directly; users
+who simply use the widget shouldn't notice anything.
