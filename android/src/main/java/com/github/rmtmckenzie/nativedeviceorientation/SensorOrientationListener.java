@@ -10,8 +10,9 @@ public class SensorOrientationListener implements IOrientationListener {
     private final Context context;
     private final OrientationCallback callback;
     private OrientationEventListener orientationEventListener;
+    private OrientationReader.Orientation lastOrientation = null;
 
-    public SensorOrientationListener(OrientationReader orientationReader, Context context, OrientationCallback callback){
+    public SensorOrientationListener(OrientationReader orientationReader, Context context, OrientationCallback callback) {
         this.reader = orientationReader;
         this.context = context;
         this.callback = callback;
@@ -19,22 +20,27 @@ public class SensorOrientationListener implements IOrientationListener {
 
     @Override
     public void startOrientationListener() {
-        if(orientationEventListener != null) return;
+        if (orientationEventListener != null) return;
 
         orientationEventListener = new OrientationEventListener(context, SensorManager.SENSOR_DELAY_NORMAL) {
             @Override
             public void onOrientationChanged(int angle) {
-                callback.receive(reader.calculateSensorOrientation(angle));
+                OrientationReader.Orientation newOrientation = reader.calculateSensorOrientation(angle);
+
+                if (!newOrientation.equals(lastOrientation)) {
+                    lastOrientation = newOrientation;
+                    callback.receive(newOrientation);
+                }
             }
         };
-        if(orientationEventListener.canDetectOrientation()){
+        if (orientationEventListener.canDetectOrientation()) {
             orientationEventListener.enable();
         }
     }
 
     @Override
     public void stopOrientationListener() {
-        if(orientationEventListener == null) return;
+        if (orientationEventListener == null) return;
         orientationEventListener.disable();
         orientationEventListener = null;
     }

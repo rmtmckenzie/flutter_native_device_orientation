@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-public class OrientationListener implements IOrientationListener{
+public class OrientationListener implements IOrientationListener {
 
     private static final IntentFilter orientationIntentFilter = new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED);
 
@@ -13,6 +13,7 @@ public class OrientationListener implements IOrientationListener{
     private final Context context;
     private final OrientationCallback callback;
     private BroadcastReceiver broadcastReceiver;
+    private OrientationReader.Orientation lastOrientation = null;
 
     public OrientationListener(OrientationReader reader, Context context, OrientationCallback callback) {
         this.reader = reader;
@@ -26,14 +27,19 @@ public class OrientationListener implements IOrientationListener{
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                callback.receive(reader.getOrientation());
+                OrientationReader.Orientation orientation = reader.getOrientation();
+                if (!orientation.equals(lastOrientation)) {
+                    lastOrientation = orientation;
+                    callback.receive(orientation);
+                }
             }
         };
 
         context.registerReceiver(broadcastReceiver, orientationIntentFilter);
 
+        lastOrientation = reader.getOrientation();
         // send initial orientation.
-        callback.receive(reader.getOrientation());
+        callback.receive(lastOrientation);
     }
 
     public void stopOrientationListener() {
