@@ -1,3 +1,7 @@
+## [0.1.2] - March 4, 2019
+
+* Reduce amount of orientation changes by keeping track of last change.
+
 ## [0.1.1] - March 4, 2019
 
 * Fix documentation and re-order changelog.
