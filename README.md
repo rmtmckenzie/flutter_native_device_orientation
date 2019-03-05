@@ -16,6 +16,16 @@ landscape right (what you get from rotation an upright phone left or right).
 This isn't an issue for most applications, but when I was writing a plugin which displays
 a camera image, it became a problem as I need to know which way the screen is rotated.
 
+## UseSensor
+
+When using either the build-in widget or the plugin directly, there is an option you can pass in
+which is called `useSensor`. When it is `true`, the device's sensors are used directly rather
+than simply using the window/page orientation. By default it is `false`, which means the plugin
+doesn't to much more than simply tell you whether the window is oriented landscapeLeft or landscapeRight.
+
+This has been tested less thoroughly than other parts of the plugin so your mileage may vary and
+if you run into any issues please open an issue!
+
 ## Using the plugin - built-in widget 
 
 There are two ways of using the plugin. The most basic is what is shown in the example code;
@@ -43,12 +53,12 @@ This is done by using the `NativeDeviceOrientationCommunicator` class. It is a s
 but can be instantiated like a normal class, and handles the communication between the 
 ios/android code and the flutter code.
 
-This class has two interesting properties:
+This class has two interesting methods:
 
-1. `Future<NativeDeviceOrientation> get orientation async`:
+1. `Future<NativeDeviceOrientation> orientation(useSensor: false)`:
 This can be called to get the orientation asynchronously.
 
-1. `Stream<NativeDeviceOrientation> get onOrientationChanged`:
+1. `Stream<NativeDeviceOrientation> onOrientationChanged(useSensor: false)`:
 This can be called to get a stream which receives new events whenever the 
 orientation changes. It should also get an initial value pretty much
 immediately.
