@@ -8,18 +8,27 @@
 
 #import "OrientationListener.h"
 
-@implementation OrientationListener
-
-UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
+@implementation OrientationListener {
+    UIDeviceOrientation lastDeviceOrientation;
+    NSString* lastOrientation;
+}
 
 - (void)startOrientationListener:(void (^)(NSString* orientation)) orientationRetrieved {
     UIDevice *device = [UIDevice currentDevice];
     [device beginGeneratingDeviceOrientationNotifications];
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-        orientationRetrieved([self getDeviceOrientation]);
+
+        NSString* orientation = [self getDeviceOrientation];
+
+        if (![orientation isEqualToString:(self->lastOrientation)]) {
+            self->lastOrientation = orientation;
+            orientationRetrieved(orientation);
+        }
     }];
-    orientationRetrieved([self getDeviceOrientation]);
+
+    self-> lastOrientation = [self getDeviceOrientation];
+    orientationRetrieved(lastOrientation);
 }
 
 - (void) getOrientation:(void (^)(NSString* orientation)) orientationRetrieved{
@@ -30,7 +39,7 @@ UIDeviceOrientation lastDeviceOrientation = UIDeviceOrientationUnknown;
 - (NSString*)getDeviceOrientation {
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     
-    // exta check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
+    // extra check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
     if(deviceOrientation != UIDeviceOrientationFaceDown && deviceOrientation != UIDeviceOrientationFaceUp) {
         lastDeviceOrientation = deviceOrientation;
     }

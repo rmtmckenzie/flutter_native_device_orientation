@@ -1,21 +1,22 @@
 #import "SensorListener.h"
 
-@implementation SensorListener
+@implementation SensorListener {
+    CMMotionManager* motionManager;
+    NSString* lastOrientation;
+}
 
-CMMotionManager* motionManager;
-
-void initMotionManager() {
+- (void)initMotionManager {
     if (!motionManager) {
         motionManager = [[CMMotionManager alloc] init];
     }
 }
 
 - (void)startOrientationListener:(void (^)(NSString* orientation)) orientationRetrieved {
-    initMotionManager();
+    [self initMotionManager];
     if([motionManager isDeviceMotionAvailable] == YES){
         motionManager.deviceMotionUpdateInterval = 0.1;
         [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
-            
+
             NSString *orientation;
             if(fabs(data.gravity.x)>fabs(data.gravity.y)){
                 // we are in landscape-mode
@@ -34,19 +35,21 @@ void initMotionManager() {
                 else{
                     orientation = PORTRAIT_UP;
                 }
-                
             }
-            orientationRetrieved(orientation);
 
+            if (self->lastOrientation == nil || ![orientation isEqualToString:(self->lastOrientation)]) {
+                self->lastOrientation = orientation;
+                orientationRetrieved(orientation);
+            }
         }];
     }
 }
 
-- (void) getOrientation:(void (^)(NSString* orientation)) orientationRetrieved{
+- (void) getOrientation:(void (^)(NSString* orientation)) orientationRetrieved {
     
     [self startOrientationListener:^(NSString *orientation) {
         orientationRetrieved(orientation);
-        
+
         // we have received a orientation stop the listener. We only want to return one orientation
         [self stopOrientationListener];
     }];

@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
         body: NativeDeviceOrientationReader(
           builder: (context) {
             NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
+            print("Received new orientation: $orientation");
             return Center(child: Text('Native Orientation: ${orientation.toString()}\n'));
           },
           useSensor: useSensor,

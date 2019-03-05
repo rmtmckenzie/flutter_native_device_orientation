@@ -6,10 +6,6 @@
 NSString* const METHOD_CHANEL = @"com.github.rmtmckenzie/flutter_native_device_orientation/orientation";
 NSString* const EVENT_CHANNEL = @"com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent";
 
-
-//CMMotionManager* motionManager;
-id<IOrientationListener> listener;
-
 @interface NativeDeviceOrientationPlugin ()
 @property id observer;
 @property (copy) void (^orientationRetrieved)(NSString *orientation);
@@ -17,6 +13,7 @@ id<IOrientationListener> listener;
 
 @implementation NativeDeviceOrientationPlugin
 
+id<IOrientationListener> listener;
 
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -85,7 +82,7 @@ id<IOrientationListener> listener;
     }
     
     if(useSensor){
-        listener =[[SensorListener alloc] init];
+        listener = [[SensorListener alloc] init];
     }else{
         listener = [[OrientationListener alloc] init];
     }
