@@ -15,8 +15,8 @@
     [self initMotionManager];
     if([motionManager isDeviceMotionAvailable] == YES){
         motionManager.deviceMotionUpdateInterval = 0.1;
+        
         [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
-
             NSString *orientation;
             if(fabs(data.gravity.x)>fabs(data.gravity.y)){
                 // we are in landscape-mode

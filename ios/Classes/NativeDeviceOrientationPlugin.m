@@ -33,7 +33,7 @@ id<IOrientationListener> listener;
         NSDictionary *args = call.arguments;
         _Bool useSensor = false;
         if(args != NULL){
-            useSensor = args[@"useSensor"];
+            useSensor = [args[@"useSensor"] boolValue];
         }
         
         if(useSensor){
@@ -78,7 +78,7 @@ id<IOrientationListener> listener;
     NSDictionary *args = arguments;
     _Bool useSensor = false;
     if(args != NULL){
-        useSensor = args[@"useSensor"];
+        useSensor = [args[@"useSensor"] boolValue];
     }
     
     if(useSensor){

@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: Pods/.symlinks/plugins/native_device_orientation/ios
 
 SPEC CHECKSUMS:
-  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  native_device_orientation: 1126735962ee926c7067a26ee9b0be020d3f5890
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  native_device_orientation: e24d00be281de72996640885d80e706142707660
 
 PODFILE CHECKSUM: 13dcf421f4da2e937a57e8ba760ed880beae536f
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.1

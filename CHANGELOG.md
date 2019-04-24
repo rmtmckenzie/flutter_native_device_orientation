@@ -1,3 +1,14 @@
+## [0.2.0] - April 24, 2019
+
+* Slightly breaking change - on iOS, the sensor was used regardless of what was
+  passed to useSensor due to a bug. This meant that even with UI rotation disabled,
+  rotation events occured.
+* Also switched back to using StatusBarOrientation. It isn't actually deprecated, just
+  not advised for normal iOS usage. However, it does what I want and is consistent with
+  Android - it returns the orientation of the actual window. If you really want to know
+  the orientation of the device, use `useSensor`
+* Add buttons to explicitly get rotation using sensor or not (UI)
+
 ## [0.1.2] - March 4, 2019
 
 * Reduce amount of orientation changes by keeping track of last change.

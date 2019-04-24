@@ -37,27 +37,18 @@
 }
 
 - (NSString*)getDeviceOrientation {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    
-    // extra check to make sure we don't return the FaceDown and FaceUp orientations but instead return the last known deviceOrientation.
-    if(deviceOrientation != UIDeviceOrientationFaceDown && deviceOrientation != UIDeviceOrientationFaceUp) {
-        lastDeviceOrientation = deviceOrientation;
-    }
-    
-    switch (lastDeviceOrientation) {
-        case UIDeviceOrientationPortrait:
+    switch ([UIApplication sharedApplication].statusBarOrientation) {
+        case UIInterfaceOrientationPortrait:
             return PORTRAIT_UP;
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
+        case UIInterfaceOrientationPortraitUpsideDown:
             return PORTRAIT_DOWN;
-            break;
-        case UIDeviceOrientationLandscapeLeft:
+        case UIInterfaceOrientationLandscapeRight:
+            // return left for right as UIInterfaceOrientation is 'the amount needed
+            // to rotate to get back to normal', not the actual rotation
             return LANDSCAPE_LEFT;
-            break;
-        case UIDeviceOrientationLandscapeRight:
+        case UIInterfaceOrientationLandscapeLeft:
+            // return right for left, see above
             return LANDSCAPE_RIGHT;
-            break;
-        case UIDeviceOrientationUnknown:
         default:
             return UNKNOWN;
             break;

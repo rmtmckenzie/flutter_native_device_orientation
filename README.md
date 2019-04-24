@@ -1,6 +1,6 @@
 # Native Device Orientation
 
-![pub package][version_badge]
+[![pub package][version_badge]](https://pub.dartlang.org/packages/native_device_orientation)
 
 This is a plugin project that allows for getting the native device orientation.
 
