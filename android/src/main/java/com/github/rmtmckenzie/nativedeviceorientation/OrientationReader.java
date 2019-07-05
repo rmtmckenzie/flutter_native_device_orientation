@@ -70,6 +70,10 @@ public class OrientationReader {
     }
 
     public Orientation calculateSensorOrientation(int angle) {
+        if (angle == -1) {
+            return Orientation.Unknown;
+        }
+
         Orientation returnOrientation;
 
         final int tolerance = 45;
