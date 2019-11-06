@@ -146,7 +146,7 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
         // resume the listener
         deviceOrientationCommunicator.resume();
         break;
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         // unused on iOS on Android the app will be suspended.
         break;
     }

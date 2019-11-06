@@ -1,3 +1,9 @@
+## [0.3.0] - November 6th, 2019
+
+* Breaking change to support the fact that AppLifecycleState.suspended has changed
+  to AppLifecycleState.detached.
+
+
 ## [0.2.0] - April 24, 2019
 
 * Slightly breaking change - on iOS, the sensor was used regardless of what was
