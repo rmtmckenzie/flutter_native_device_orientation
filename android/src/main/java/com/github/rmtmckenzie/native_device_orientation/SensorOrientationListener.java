@@ -1,4 +1,4 @@
-package com.github.rmtmckenzie.nativedeviceorientation;
+package com.github.rmtmckenzie.native_device_orientation;
 
 import android.content.Context;
 import android.hardware.SensorManager;

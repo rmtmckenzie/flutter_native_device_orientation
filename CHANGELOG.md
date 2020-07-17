@@ -1,8 +1,13 @@
+## [0.4.0] - July 17, 2020
+
+* Fix an issue where the most recent orientation is not always retrieved.
+* Update to use new android embedding.
+* Use pendantic style for dart code
+
 ## [0.3.0] - November 6th, 2019
 
 * Breaking change to support the fact that AppLifecycleState.suspended has changed
   to AppLifecycleState.detached.
-
 
 ## [0.2.0] - April 24, 2019
 

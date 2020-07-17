@@ -1,5 +1,5 @@
-group 'com.github.rmtmckenzie.nativedeviceorientation'
-version '1.0-SNAPSHOT'
+group 'com.github.rmtmckenzie.native_device_orientation'
+version '1.0'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
+        classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
 
@@ -26,7 +26,6 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'

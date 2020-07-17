@@ -1,9 +1,11 @@
-package com.github.rmtmckenzie.nativedeviceorientation;
+package com.github.rmtmckenzie.native_device_orientation;
 
 import android.content.Context;
 import android.content.res.Configuration;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import androidx.arch.core.util.Function;
 
 public class OrientationReader {
 
@@ -55,9 +57,8 @@ public class OrientationReader {
         // We can't get the orientation of the device directly. We have to listen to the orientation and immediately return the orientation and cancel this listener.
 
         // if the OrientationListener isn't null, we are already requesting the getSensorOrientation. Firing it multiple times could cause problems.
-        if(orientationListener != null) return;
+        if (orientationListener != null) return;
         orientationListener = new SensorOrientationListener(new OrientationReader(context), context, new IOrientationListener.OrientationCallback() {
-
             @Override
             public void receive(Orientation orientation) {
                 callback.receive(orientation);
@@ -79,7 +80,7 @@ public class OrientationReader {
         // and landscape for tablets. We have to compensate this by calculating the default orientation,
         // and applying an offset.
         int defaultDeviceOrientation = getDeviceDefaultOrientation();
-        if(defaultDeviceOrientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (defaultDeviceOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             // add offset to landscape
             angle += 90;
         }
@@ -111,13 +112,13 @@ public class OrientationReader {
 
     public int getDeviceDefaultOrientation() {
 
-        WindowManager windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         Configuration config = context.getResources().getConfiguration();
 
         int rotation = windowManager.getDefaultDisplay().getRotation();
 
-        if ( ((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
+        if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
                 config.orientation == Configuration.ORIENTATION_LANDSCAPE)
                 || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) &&
                 config.orientation == Configuration.ORIENTATION_PORTRAIT)) {

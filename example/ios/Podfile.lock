@@ -4,19 +4,19 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - Flutter (from `Pods/.symlinks/flutter/ios`)
-  - native_device_orientation (from `Pods/.symlinks/plugins/native_device_orientation/ios`)
+  - Flutter (from `Flutter`)
+  - native_device_orientation (from `.symlinks/plugins/native_device_orientation/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: Pods/.symlinks/flutter/ios
+    :path: Flutter
   native_device_orientation:
-    :path: Pods/.symlinks/plugins/native_device_orientation/ios
+    :path: ".symlinks/plugins/native_device_orientation/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  native_device_orientation: e24d00be281de72996640885d80e706142707660
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  native_device_orientation: d66478ff6f3d492ac3ca23405999d96c3221e726
 
-PODFILE CHECKSUM: 13dcf421f4da2e937a57e8ba760ed880beae536f
+PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.9.3
