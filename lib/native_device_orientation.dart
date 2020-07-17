@@ -160,12 +160,25 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
         builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
           if (asyncResult.connectionState == ConnectionState.waiting) {
             return new OrientationBuilder(builder: (buildContext, orientation) {
-              return new _InheritedNativeDeviceOrientation(
-                nativeOrientation: orientation == Orientation.landscape
-                    ? NativeDeviceOrientation.landscapeRight
-                    : NativeDeviceOrientation.portraitUp,
-                child: new Builder(builder: widget.builder),
-              );
+              return FutureBuilder<NativeDeviceOrientation>(
+                  future: deviceOrientationCommunicator.orientation(),
+                  builder: (context,
+                      AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
+                    if (asyncResult.connectionState ==
+                        ConnectionState.waiting) {
+                      return new _InheritedNativeDeviceOrientation(
+                        nativeOrientation: orientation == Orientation.landscape
+                            ? NativeDeviceOrientation.landscapeRight
+                            : NativeDeviceOrientation.portraitUp,
+                        child: new Builder(builder: widget.builder),
+                      );
+                    } else {
+                      return new _InheritedNativeDeviceOrientation(
+                        nativeOrientation: asyncResult.data,
+                        child: new Builder(builder: widget.builder),
+                      );
+                    }
+                  });
             });
           } else {
             return new _InheritedNativeDeviceOrientation(
