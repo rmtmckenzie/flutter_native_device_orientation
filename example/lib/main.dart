@@ -19,12 +19,15 @@ class _MyAppState extends State<MyApp> {
             title: Text('Native Orientation Example'),
             actions: <Widget>[
               Center(child: Text('Sensor:')),
-              Switch(value: useSensor, onChanged: (val) => setState(() => useSensor = val)),
+              Switch(
+                  value: useSensor,
+                  onChanged: (val) => setState(() => useSensor = val)),
             ],
           ),
           body: NativeDeviceOrientationReader(
             builder: (context) {
-              final orientation = NativeDeviceOrientationReader.orientation(context);
+              final orientation =
+                  NativeDeviceOrientationReader.orientation(context);
               print('Received new orientation: $orientation');
               return Center(child: Text('Native Orientation: $orientation\n'));
             },
@@ -38,10 +41,13 @@ class _MyAppState extends State<MyApp> {
                   FloatingActionButton(
                     child: Text('Sensor'),
                     onPressed: () async {
-                      final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: true);
+                      final orientation =
+                          await NativeDeviceOrientationCommunicator()
+                              .orientation(useSensor: true);
                       Scaffold.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Native Orientation read: $orientation'),
+                          content:
+                              Text('Native Orientation read: $orientation'),
                           duration: Duration(milliseconds: 500),
                         ),
                       );
@@ -51,10 +57,13 @@ class _MyAppState extends State<MyApp> {
                   FloatingActionButton(
                     child: Text('UI'),
                     onPressed: () async {
-                      final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: false);
+                      final orientation =
+                          await NativeDeviceOrientationCommunicator()
+                              .orientation(useSensor: false);
                       Scaffold.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Native Orientation read: $orientation'),
+                          content:
+                              Text('Native Orientation read: $orientation'),
                           duration: Duration(milliseconds: 500),
                         ),
                       );

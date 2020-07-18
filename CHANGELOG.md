@@ -1,3 +1,7 @@
+## [0.4.1] - July 17, 2020
+
+* Fix various pub-specific issues
+
 ## [0.4.0] - July 17, 2020
 
 * Fix an issue where the most recent orientation is not always retrieved.
