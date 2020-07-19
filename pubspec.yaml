@@ -18,8 +18,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package:
-          package: com.github.rmtmckenzie.native_device_orientation
-          pluginClass: NativeDeviceOrientationPlugin
+        package: com.github.rmtmckenzie.native_device_orientation
+        pluginClass: NativeDeviceOrientationPlugin
       ios:
         pluginClass: NativeDeviceOrientationPlugin
