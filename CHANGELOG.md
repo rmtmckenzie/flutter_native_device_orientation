@@ -1,3 +1,7 @@
+## [0.4.2] - July 19, 2020
+
+* Fix package definition & remove iOS i386 block
+
 ## [0.4.1] - July 17, 2020
 
 * Fix various pub-specific issues
