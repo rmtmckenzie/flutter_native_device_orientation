@@ -31,6 +31,23 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin {
   private IOrientationListener listener;
   private Context context;
 
+  /**
+   * Plugin Registration
+   * @param registrar flutter registrar
+   */
+  public static void registerWith(Registrar registrar) {
+    NativeDeviceOrientationPlugin instance = new NativeDeviceOrientationPlugin();
+    instance.channel = new MethodChannel(registrar.messenger(), METHOD_CHANEL);
+    instance.channel.setMethodCallHandler(instance.methodCallHandler);
+
+    instance.eventChannel = new EventChannel(registrar.messenger(), EVENT_CHANNEL);
+    instance.eventChannel.setStreamHandler(instance.streamHandler);
+
+    instance.context = registrar.context();
+    instance.reader = new OrientationReader(instance.context);
+  }
+
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel =  new MethodChannel(flutterPluginBinding.getBinaryMessenger(), METHOD_CHANEL);

@@ -1,3 +1,7 @@
+## [0.4.3] - July 20, 2020
+
+* Re-add v1 embedding.
+
 ## [0.4.2] - July 19, 2020
 
 * Fix package definition & remove iOS i386 block
