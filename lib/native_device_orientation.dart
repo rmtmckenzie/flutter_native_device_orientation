@@ -43,13 +43,17 @@ class NativeDeviceOrientationCommunicator {
   NativeDeviceOrientationCommunicator.private(
       this._methodChannel, this._eventChannel);
 
-  Future<NativeDeviceOrientation> orientation({bool useSensor = false}) async {
+  Future<NativeDeviceOrientation> orientation({
+    bool useSensor = false,
+    NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
+  }) async {
     final params = <String, dynamic>{
       'useSensor': useSensor,
     };
-    final orientation =
+    final orientationString =
         await _methodChannel.invokeMethod('getOrientation', params);
-    return _fromString(orientation);
+    final orientation = _fromString(orientationString);
+    return (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation;
   }
 
   // these methods are needed to pause listening to sensorRequests when the app goes to background
@@ -62,8 +66,10 @@ class NativeDeviceOrientationCommunicator {
     await _methodChannel.invokeMethod('resume');
   }
 
-  Stream<NativeDeviceOrientation> onOrientationChanged(
-      {bool useSensor = false}) {
+  Stream<NativeDeviceOrientation> onOrientationChanged({
+    bool useSensor = false,
+    NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
+  }) {
     if (_stream == null || _stream.useSensor != useSensor) {
       final params = <String, dynamic>{
         'useSensor': useSensor,
@@ -75,7 +81,9 @@ class NativeDeviceOrientationCommunicator {
           }),
           useSensor: useSensor);
     }
-    return _stream.stream;
+    return _stream.stream.map(
+            (orientation) => (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation
+    );
   }
 
   NativeDeviceOrientation _fromString(String orientationString) {

@@ -2,6 +2,7 @@ package com.github.rmtmckenzie.native_device_orientation;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.WindowManager;
 
@@ -71,7 +72,7 @@ public class OrientationReader {
     }
 
     public Orientation calculateSensorOrientation(int angle) {
-        if (angle == -1) {
+        if (angle == OrientationEventListener.ORIENTATION_UNKNOWN) {
             return Orientation.Unknown;
         }
         Orientation returnOrientation;
