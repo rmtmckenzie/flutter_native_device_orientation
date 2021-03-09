@@ -3,6 +3,9 @@ description: Demonstrates how to use the native_device_orientation plugin.
 
 publish_to: 'none'
 
+environment:
+  sdk: '>= 2.12.0-0 < 3.0.0'
+
 dependencies:
   flutter:
     sdk: flutter
