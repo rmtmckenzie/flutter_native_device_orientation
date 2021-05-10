@@ -1,3 +1,7 @@
+## [1.0.0] - March 9, 2021
+
+* Support null-safety.
+
 ## [0.4.3] - July 20, 2020
 
 * Re-add v1 embedding.
