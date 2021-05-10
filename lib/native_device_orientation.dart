@@ -62,7 +62,7 @@ class NativeDeviceOrientationCommunicator {
     bool useSensor = false,
     NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
   }) {
-    if (_stream == null || _stream.useSensor != useSensor) {
+    if (_stream == null || _stream!.useSensor != useSensor) {
       final params = <String, dynamic>{
         'useSensor': useSensor,
       };
