@@ -84,6 +84,62 @@ class NativeDeviceOrientationCommunicator {
   }
 }
 
+class NativeDeviceOrientedWidget extends StatelessWidget {
+  const NativeDeviceOrientedWidget({
+    Key? key,
+    this.useSensor = false,
+    this.landscape,
+    this.landscapeLeft,
+    this.landscapeRight,
+    this.portrait,
+    this.portraitUp,
+    this.portraitDown,
+    required this.fallback,
+  }) : super(key: key);
+
+  final bool useSensor;
+  final Widget Function(BuildContext)? landscape;
+  final Widget Function(BuildContext)? landscapeLeft;
+  final Widget Function(BuildContext)? landscapeRight;
+  final Widget Function(BuildContext)? portrait;
+  final Widget Function(BuildContext)? portraitUp;
+  final Widget Function(BuildContext)? portraitDown;
+  final Widget Function(BuildContext) fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    return NativeDeviceOrientationReader(
+        builder: (context) {
+          final orientation =
+              NativeDeviceOrientationReader.orientation(context);
+
+          switch (orientation) {
+            case NativeDeviceOrientation.landscapeLeft:
+              return Builder(builder: landscapeLeft ?? landscape ?? fallback);
+            case NativeDeviceOrientation.landscapeRight:
+              return Builder(builder: landscapeRight ?? landscape ?? fallback);
+            case NativeDeviceOrientation.portraitUp:
+              return Builder(builder: portraitUp ?? portrait ?? fallback);
+            case NativeDeviceOrientation.portraitDown:
+              return Builder(builder: portraitDown ?? portrait ?? fallback);
+            case NativeDeviceOrientation.unknown:
+            default:
+              return OrientationBuilder(builder: (buildContext, orientation) {
+                switch (orientation) {
+                  case Orientation.landscape:
+                    return Builder(builder: landscape ?? fallback);
+                  case Orientation.portrait:
+                    return Builder(builder: portrait ?? fallback);
+                  default:
+                    return Builder(builder: fallback);
+                }
+              });
+          }
+        },
+        useSensor: useSensor);
+  }
+}
+
 class NativeDeviceOrientationReader extends StatefulWidget {
   const NativeDeviceOrientationReader({
     Key? key,
@@ -192,12 +248,18 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
 class _InheritedNativeDeviceOrientation extends InheritedWidget {
   final NativeDeviceOrientation? nativeOrientation;
 
-  const _InheritedNativeDeviceOrientation({
+  _InheritedNativeDeviceOrientation._({
     Key? key,
     required this.nativeOrientation,
     required Widget child,
-  })   : assert(nativeOrientation != null),
-        super(key: key, child: child);
+  }) : super(key: key, child: child);
+
+  factory _InheritedNativeDeviceOrientation({required NativeDeviceOrientation? nativeOrientation, required Widget child}) {
+    return _InheritedNativeDeviceOrientation._(
+      nativeOrientation: nativeOrientation ?? NativeDeviceOrientation.unknown,
+      child: child,
+    );
+  }
 
   @override
   bool updateShouldNotify(_InheritedNativeDeviceOrientation oldWidget) =>
