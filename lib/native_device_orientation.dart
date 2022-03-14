@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
 
@@ -118,12 +117,12 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -196,7 +195,7 @@ class _InheritedNativeDeviceOrientation extends InheritedWidget {
     Key? key,
     required this.nativeOrientation,
     required Widget child,
-  })   : assert(nativeOrientation != null),
+  })  : assert(nativeOrientation != null),
         super(key: key, child: child);
 
   @override
