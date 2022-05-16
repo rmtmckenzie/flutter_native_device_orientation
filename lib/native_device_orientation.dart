@@ -2,9 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
-enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
+enum NativeDeviceOrientation {
+  portraitUp,
+  portraitDown,
+  landscapeLeft,
+  landscapeRight,
+  unknown
+}
 
 class _OrientationStream {
   final Stream<NativeDeviceOrientation> stream;
@@ -23,23 +28,27 @@ class NativeDeviceOrientationCommunicator {
 
   factory NativeDeviceOrientationCommunicator() {
     if (_instance == null) {
-      final methodChannel = const MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
-      final eventChannel =
-          const EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
-      _instance = NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel);
+      final methodChannel = const MethodChannel(
+          'com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
+      final eventChannel = const EventChannel(
+          'com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
+      _instance = NativeDeviceOrientationCommunicator.private(
+          methodChannel, eventChannel);
     }
 
     return _instance!;
   }
 
   @visibleForTesting
-  NativeDeviceOrientationCommunicator.private(this._methodChannel, this._eventChannel);
+  NativeDeviceOrientationCommunicator.private(
+      this._methodChannel, this._eventChannel);
 
   Future<NativeDeviceOrientation> orientation({bool useSensor = false}) async {
     final params = <String, dynamic>{
       'useSensor': useSensor,
     };
-    final orientation = await _methodChannel.invokeMethod('getOrientation', params);
+    final orientation =
+        await _methodChannel.invokeMethod('getOrientation', params);
     return _fromString(orientation);
   }
 
@@ -53,13 +62,15 @@ class NativeDeviceOrientationCommunicator {
     await _methodChannel.invokeMethod('resume');
   }
 
-  Stream<NativeDeviceOrientation> onOrientationChanged({bool useSensor = false}) {
+  Stream<NativeDeviceOrientation> onOrientationChanged(
+      {bool useSensor = false}) {
     if (_stream == null || _stream!.useSensor != useSensor) {
       final params = <String, dynamic>{
         'useSensor': useSensor,
       };
       _stream = _OrientationStream(
-          stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
+          stream:
+              _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
             return _fromString(event);
           }),
           useSensor: useSensor);
@@ -95,11 +106,14 @@ class NativeDeviceOrientationReader extends StatefulWidget {
   final bool useSensor;
 
   static NativeDeviceOrientation orientation(BuildContext context) {
-    final inheritedNativeOrientation = context.dependOnInheritedWidgetOfExactType<_InheritedNativeDeviceOrientation>();
+    final inheritedNativeOrientation =
+        context.dependOnInheritedWidgetOfExactType<
+            _InheritedNativeDeviceOrientation>();
 
     assert(() {
       if (inheritedNativeOrientation == null) {
-        throw FlutterError('DeviceOrientationListener.orientation was called but there'
+        throw FlutterError(
+            'DeviceOrientationListener.orientation was called but there'
             ' is no DeviceOrientationListener in the context.');
       }
       return true;
@@ -112,18 +126,20 @@ class NativeDeviceOrientationReader extends StatefulWidget {
   State<StatefulWidget> createState() => NativeDeviceOrientationReaderState();
 }
 
-class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> with WidgetsBindingObserver {
-  NativeDeviceOrientationCommunicator deviceOrientationCommunicator = NativeDeviceOrientationCommunicator();
+class NativeDeviceOrientationReaderState
+    extends State<NativeDeviceOrientationReader> with WidgetsBindingObserver {
+  NativeDeviceOrientationCommunicator deviceOrientationCommunicator =
+      NativeDeviceOrientationCommunicator();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -155,14 +171,17 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return StreamBuilder(
-        stream: deviceOrientationCommunicator.onOrientationChanged(useSensor: widget.useSensor),
+        stream: deviceOrientationCommunicator.onOrientationChanged(
+            useSensor: widget.useSensor),
         builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
           if (asyncResult.connectionState == ConnectionState.waiting) {
             return OrientationBuilder(builder: (buildContext, orientation) {
               return FutureBuilder<NativeDeviceOrientation>(
                   future: deviceOrientationCommunicator.orientation(),
-                  builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
-                    if (asyncResult.connectionState == ConnectionState.waiting) {
+                  builder: (context,
+                      AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
+                    if (asyncResult.connectionState ==
+                        ConnectionState.waiting) {
                       return _InheritedNativeDeviceOrientation(
                         nativeOrientation: orientation == Orientation.landscape
                             ? NativeDeviceOrientation.landscapeRight
@@ -196,7 +215,7 @@ class _InheritedNativeDeviceOrientation extends InheritedWidget {
     Key? key,
     required this.nativeOrientation,
     required Widget child,
-  })   : assert(nativeOrientation != null),
+  })  : assert(nativeOrientation != null),
         super(key: key, child: child);
 
   @override
