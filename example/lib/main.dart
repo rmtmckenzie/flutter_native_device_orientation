@@ -22,11 +22,27 @@ class _MyAppState extends State<MyApp> {
               Switch(value: useSensor, onChanged: (val) => setState(() => useSensor = val)),
             ],
           ),
-          body: NativeDeviceOrientationReader(
-            builder: (context) {
-              final orientation = NativeDeviceOrientationReader.orientation(context);
-              print('Received new orientation: $orientation');
-              return Center(child: Text('Native Orientation: $orientation\n'));
+          body: NativeDeviceOrientedWidget(
+            landscape: (context) {
+              return Center(child: Text('Native Orientation: Landscape (Unknown Side)\n'));
+            },
+            landscapeLeft: (context) {
+              return Center(child: Text('Native Orientation: Landscape Left\n'));
+            },
+            landscapeRight: (context) {
+              return Center(child: Text('Native Orientation: Landscape Right\n'));
+            },
+            portrait: (context) {
+              return Center(child: Text('Native Orientation: Portrait (Unknown Side)\n'));
+            },
+            portraitUp: (context) {
+              return Center(child: Text('Native Orientation: Portrait Up\n'));
+            },
+            portraitDown: (context) {
+              return Center(child: Text('Native Orientation: Portrait Down\n'));
+            },
+            fallback: (context) {
+              return Center(child: Text('Native Orientation: Unknown\n'));
             },
             useSensor: useSensor,
           ),

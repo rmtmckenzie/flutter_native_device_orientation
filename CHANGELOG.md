@@ -1,6 +1,7 @@
 ## [1.1.0] - May 17, 2022
 
 * Support Flutter 3.0 (should still support 2.x as well)
+* Adds additional, more explicit way to use plugin
 
 ## [1.0.0] - March 9, 2021
 
