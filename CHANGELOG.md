@@ -1,3 +1,8 @@
+## [1.1.2] - May 17, 2022
+
+* Fix direct sensor getOrientation on android
+* Listen to status bar change on iOS rather than device change (fix for older devices)
+
 ## [1.1.1] - May 17, 2022
 
 * Rename unknownSubstitute to defaultOrientation.

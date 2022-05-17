@@ -17,7 +17,7 @@
     UIDevice *device = [UIDevice currentDevice];
     [device beginGeneratingDeviceOrientationNotifications];
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    self.observer = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+    self.observer = [nc addObserverForName:UIApplicationDidChangeStatusBarOrientationNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
 
         NSString* orientation = [self getDeviceOrientation];
 
