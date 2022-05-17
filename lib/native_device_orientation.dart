@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
 
@@ -23,9 +22,8 @@ class NativeDeviceOrientationCommunicator {
 
   factory NativeDeviceOrientationCommunicator() {
     if (_instance == null) {
-      final methodChannel = const MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
-      final eventChannel =
-          const EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
+      const methodChannel = MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
+      const eventChannel = EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
       _instance = NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel);
     }
 
@@ -35,12 +33,16 @@ class NativeDeviceOrientationCommunicator {
   @visibleForTesting
   NativeDeviceOrientationCommunicator.private(this._methodChannel, this._eventChannel);
 
-  Future<NativeDeviceOrientation> orientation({bool useSensor = false}) async {
+  Future<NativeDeviceOrientation> orientation({
+    bool useSensor = false,
+    NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
+  }) async {
     final params = <String, dynamic>{
       'useSensor': useSensor,
     };
-    final orientation = await _methodChannel.invokeMethod('getOrientation', params);
-    return _fromString(orientation);
+    final orientationString = await _methodChannel.invokeMethod('getOrientation', params);
+    final orientation = _fromString(orientationString);
+    return (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation;
   }
 
   // these methods are needed to pause listening to sensorRequests when the app goes to background
@@ -53,18 +55,23 @@ class NativeDeviceOrientationCommunicator {
     await _methodChannel.invokeMethod('resume');
   }
 
-  Stream<NativeDeviceOrientation> onOrientationChanged({bool useSensor = false}) {
+  Stream<NativeDeviceOrientation> onOrientationChanged({
+    bool useSensor = false,
+    NativeDeviceOrientation defaultOrientation = NativeDeviceOrientation.portraitUp,
+  }) {
     if (_stream == null || _stream!.useSensor != useSensor) {
       final params = <String, dynamic>{
         'useSensor': useSensor,
       };
       _stream = _OrientationStream(
-          stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
-            return _fromString(event);
-          }),
-          useSensor: useSensor);
+        stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
+          return _fromString(event);
+        }),
+        useSensor: useSensor,
+      );
     }
-    return _stream!.stream;
+    return _stream!.stream
+        .map((orientation) => (orientation == NativeDeviceOrientation.unknown) ? defaultOrientation : orientation);
   }
 
   NativeDeviceOrientation _fromString(String orientationString) {
@@ -81,6 +88,61 @@ class NativeDeviceOrientationCommunicator {
       default:
         return NativeDeviceOrientation.unknown;
     }
+  }
+}
+
+class NativeDeviceOrientedWidget extends StatelessWidget {
+  const NativeDeviceOrientedWidget({
+    Key? key,
+    this.useSensor = false,
+    this.landscape,
+    this.landscapeLeft,
+    this.landscapeRight,
+    this.portrait,
+    this.portraitUp,
+    this.portraitDown,
+    required this.fallback,
+  }) : super(key: key);
+
+  final bool useSensor;
+  final Widget Function(BuildContext)? landscape;
+  final Widget Function(BuildContext)? landscapeLeft;
+  final Widget Function(BuildContext)? landscapeRight;
+  final Widget Function(BuildContext)? portrait;
+  final Widget Function(BuildContext)? portraitUp;
+  final Widget Function(BuildContext)? portraitDown;
+  final Widget Function(BuildContext) fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    return NativeDeviceOrientationReader(
+        builder: (context) {
+          final orientation = NativeDeviceOrientationReader.orientation(context);
+
+          switch (orientation) {
+            case NativeDeviceOrientation.landscapeLeft:
+              return Builder(builder: landscapeLeft ?? landscape ?? fallback);
+            case NativeDeviceOrientation.landscapeRight:
+              return Builder(builder: landscapeRight ?? landscape ?? fallback);
+            case NativeDeviceOrientation.portraitUp:
+              return Builder(builder: portraitUp ?? portrait ?? fallback);
+            case NativeDeviceOrientation.portraitDown:
+              return Builder(builder: portraitDown ?? portrait ?? fallback);
+            case NativeDeviceOrientation.unknown:
+            default:
+              return OrientationBuilder(builder: (buildContext, orientation) {
+                switch (orientation) {
+                  case Orientation.landscape:
+                    return Builder(builder: landscape ?? fallback);
+                  case Orientation.portrait:
+                    return Builder(builder: portrait ?? fallback);
+                  default:
+                    return Builder(builder: fallback);
+                }
+              });
+          }
+        },
+        useSensor: useSensor);
   }
 }
 
@@ -105,7 +167,7 @@ class NativeDeviceOrientationReader extends StatefulWidget {
       return true;
     }());
 
-    return inheritedNativeOrientation!.nativeOrientation!;
+    return inheritedNativeOrientation!.nativeOrientation;
   }
 
   @override
@@ -115,15 +177,19 @@ class NativeDeviceOrientationReader extends StatefulWidget {
 class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> with WidgetsBindingObserver {
   NativeDeviceOrientationCommunicator deviceOrientationCommunicator = NativeDeviceOrientationCommunicator();
 
+  // allow value of type T or T? to be treated as
+  // a value of type T?
+  T? _ambiguate<T>(T? value) => value;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    _ambiguate(WidgetsBinding.instance)?.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    _ambiguate(WidgetsBinding.instance)?.removeObserver(this);
     super.dispose();
   }
 
@@ -190,14 +256,23 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
 }
 
 class _InheritedNativeDeviceOrientation extends InheritedWidget {
-  final NativeDeviceOrientation? nativeOrientation;
+  final NativeDeviceOrientation nativeOrientation;
 
-  const _InheritedNativeDeviceOrientation({
+  const _InheritedNativeDeviceOrientation._({
     Key? key,
     required this.nativeOrientation,
     required Widget child,
-  })   : assert(nativeOrientation != null),
-        super(key: key, child: child);
+  }) : super(key: key, child: child);
+
+  factory _InheritedNativeDeviceOrientation({
+    required NativeDeviceOrientation? nativeOrientation,
+    required Widget child,
+  }) {
+    return _InheritedNativeDeviceOrientation._(
+      nativeOrientation: nativeOrientation ?? NativeDeviceOrientation.unknown,
+      child: child,
+    );
+  }
 
   @override
   bool updateShouldNotify(_InheritedNativeDeviceOrientation oldWidget) =>
