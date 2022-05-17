@@ -1,3 +1,7 @@
+## [1.1.1] - May 17, 2022
+
+* Rename unknownSubstitute to defaultOrientation.
+
 ## [1.1.0] - May 17, 2022
 
 * Support Flutter 3.0 (should still support 2.x as well)

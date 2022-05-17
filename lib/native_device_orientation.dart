@@ -35,14 +35,14 @@ class NativeDeviceOrientationCommunicator {
 
   Future<NativeDeviceOrientation> orientation({
     bool useSensor = false,
-    NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
+    NativeDeviceOrientation defaultOrientation = NativeDeviceOrientation.portraitUp,
   }) async {
     final params = <String, dynamic>{
       'useSensor': useSensor,
     };
     final orientationString = await _methodChannel.invokeMethod('getOrientation', params);
     final orientation = _fromString(orientationString);
-    return (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation;
+    return (orientation == NativeDeviceOrientation.unknown) ? defaultOrientation : orientation;
   }
 
   // these methods are needed to pause listening to sensorRequests when the app goes to background
@@ -116,33 +116,34 @@ class NativeDeviceOrientedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NativeDeviceOrientationReader(
-        builder: (context) {
-          final orientation = NativeDeviceOrientationReader.orientation(context);
+      builder: (context) {
+        final orientation = NativeDeviceOrientationReader.orientation(context);
 
-          switch (orientation) {
-            case NativeDeviceOrientation.landscapeLeft:
-              return Builder(builder: landscapeLeft ?? landscape ?? fallback);
-            case NativeDeviceOrientation.landscapeRight:
-              return Builder(builder: landscapeRight ?? landscape ?? fallback);
-            case NativeDeviceOrientation.portraitUp:
-              return Builder(builder: portraitUp ?? portrait ?? fallback);
-            case NativeDeviceOrientation.portraitDown:
-              return Builder(builder: portraitDown ?? portrait ?? fallback);
-            case NativeDeviceOrientation.unknown:
-            default:
-              return OrientationBuilder(builder: (buildContext, orientation) {
-                switch (orientation) {
-                  case Orientation.landscape:
-                    return Builder(builder: landscape ?? fallback);
-                  case Orientation.portrait:
-                    return Builder(builder: portrait ?? fallback);
-                  default:
-                    return Builder(builder: fallback);
-                }
-              });
-          }
-        },
-        useSensor: useSensor);
+        switch (orientation) {
+          case NativeDeviceOrientation.landscapeLeft:
+            return Builder(builder: landscapeLeft ?? landscape ?? fallback);
+          case NativeDeviceOrientation.landscapeRight:
+            return Builder(builder: landscapeRight ?? landscape ?? fallback);
+          case NativeDeviceOrientation.portraitUp:
+            return Builder(builder: portraitUp ?? portrait ?? fallback);
+          case NativeDeviceOrientation.portraitDown:
+            return Builder(builder: portraitDown ?? portrait ?? fallback);
+          case NativeDeviceOrientation.unknown:
+          default:
+            return OrientationBuilder(builder: (buildContext, orientation) {
+              switch (orientation) {
+                case Orientation.landscape:
+                  return Builder(builder: landscape ?? fallback);
+                case Orientation.portrait:
+                  return Builder(builder: portrait ?? fallback);
+                default:
+                  return Builder(builder: fallback);
+              }
+            });
+        }
+      },
+      useSensor: useSensor,
+    );
   }
 }
 
