@@ -1,3 +1,7 @@
+## [1.1.0] - May 17, 2022
+
+* Support Flutter 3.0 (should still support 2.x as well)
+
 ## [1.0.0] - March 9, 2021
 
 * Support null-safety.

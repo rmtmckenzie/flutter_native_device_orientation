@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 
 enum NativeDeviceOrientation { portraitUp, portraitDown, landscapeLeft, landscapeRight, unknown }
 
@@ -115,15 +114,19 @@ class NativeDeviceOrientationReader extends StatefulWidget {
 class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationReader> with WidgetsBindingObserver {
   NativeDeviceOrientationCommunicator deviceOrientationCommunicator = NativeDeviceOrientationCommunicator();
 
+  // allow value of type T or T? to be treated as
+  // a value of type T?
+  T? _ambiguate<T>(T? value) => value;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    _ambiguate(WidgetsBinding.instance)?.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    _ambiguate(WidgetsBinding.instance)?.removeObserver(this);
     super.dispose();
   }
 
@@ -196,7 +199,7 @@ class _InheritedNativeDeviceOrientation extends InheritedWidget {
     Key? key,
     required this.nativeOrientation,
     required Widget child,
-  })   : assert(nativeOrientation != null),
+  })  : assert(nativeOrientation != null),
         super(key: key, child: child);
 
   @override
