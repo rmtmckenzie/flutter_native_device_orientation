@@ -13,7 +13,7 @@ public class OrientationListener implements IOrientationListener {
     private final Context context;
     private final OrientationCallback callback;
     private BroadcastReceiver broadcastReceiver;
-    private OrientationReader.Orientation lastOrientation = null;
+    private NativeOrientation lastOrientation = null;
 
     public OrientationListener(OrientationReader reader, Context context, OrientationCallback callback) {
         this.reader = reader;
@@ -27,7 +27,7 @@ public class OrientationListener implements IOrientationListener {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                OrientationReader.Orientation orientation = reader.getOrientation();
+                NativeOrientation orientation = reader.getOrientation();
                 if (!orientation.equals(lastOrientation)) {
                     lastOrientation = orientation;
                     callback.receive(orientation);
