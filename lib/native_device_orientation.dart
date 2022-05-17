@@ -22,9 +22,8 @@ class NativeDeviceOrientationCommunicator {
 
   factory NativeDeviceOrientationCommunicator() {
     if (_instance == null) {
-      final methodChannel = const MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
-      final eventChannel =
-          const EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
+      const methodChannel = MethodChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientation');
+      const eventChannel = EventChannel('com.github.rmtmckenzie/flutter_native_device_orientation/orientationevent');
       _instance = NativeDeviceOrientationCommunicator.private(methodChannel, eventChannel);
     }
 
@@ -41,8 +40,7 @@ class NativeDeviceOrientationCommunicator {
     final params = <String, dynamic>{
       'useSensor': useSensor,
     };
-    final orientationString =
-        await _methodChannel.invokeMethod('getOrientation', params);
+    final orientationString = await _methodChannel.invokeMethod('getOrientation', params);
     final orientation = _fromString(orientationString);
     return (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation;
   }
@@ -59,21 +57,21 @@ class NativeDeviceOrientationCommunicator {
 
   Stream<NativeDeviceOrientation> onOrientationChanged({
     bool useSensor = false,
-    NativeDeviceOrientation unknownSubstitute = NativeDeviceOrientation.portraitUp,
+    NativeDeviceOrientation defaultOrientation = NativeDeviceOrientation.portraitUp,
   }) {
     if (_stream == null || _stream!.useSensor != useSensor) {
       final params = <String, dynamic>{
         'useSensor': useSensor,
       };
       _stream = _OrientationStream(
-          stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
-            return _fromString(event);
-          }),
-          useSensor: useSensor);
+        stream: _eventChannel.receiveBroadcastStream(params).map((dynamic event) {
+          return _fromString(event);
+        }),
+        useSensor: useSensor,
+      );
     }
-    return _stream!.stream.map(
-            (orientation) => (orientation == NativeDeviceOrientation.unknown) ? unknownSubstitute : orientation
-    );
+    return _stream!.stream
+        .map((orientation) => (orientation == NativeDeviceOrientation.unknown) ? defaultOrientation : orientation);
   }
 
   NativeDeviceOrientation _fromString(String orientationString) {
@@ -260,7 +258,7 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
 class _InheritedNativeDeviceOrientation extends InheritedWidget {
   final NativeDeviceOrientation nativeOrientation;
 
-  _InheritedNativeDeviceOrientation._({
+  const _InheritedNativeDeviceOrientation._({
     Key? key,
     required this.nativeOrientation,
     required Widget child,
