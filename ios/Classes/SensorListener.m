@@ -18,9 +18,18 @@
         
         [motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *data, NSError *error) {
             NSString *orientation;
-            if(fabs(data.gravity.x)>fabs(data.gravity.y)){
+
+            float agx = fabs(data.gravity.x), agy = fabs(data.gravity.y);
+          
+            if (agx < 0.1 && agy < 0.1) {
+                // ignore when both values are small as this means
+                // the device is flat.
+                return;
+            }
+          
+            if(agx > agy){
                 // we are in landscape-mode
-                if(data.gravity.x>=0){
+                if(data.gravity.x >= 0){
                     orientation = LANDSCAPE_RIGHT;
                 }
                 else{
@@ -29,7 +38,7 @@
             }
             else{
                 // we are in portrait mode
-                if(data.gravity.y>=0){
+                if(data.gravity.y >= 0){
                     orientation = PORTRAIT_DOWN;
                 }
                 else{

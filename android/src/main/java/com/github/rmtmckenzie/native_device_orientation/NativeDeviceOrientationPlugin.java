@@ -40,6 +40,7 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin {
 
     context = flutterPluginBinding.getApplicationContext();
     reader = new OrientationReader(context);
+    sensorReader = new SensorOrientationReader(context);
   }
 
 
@@ -98,7 +99,8 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin {
       boolean useSensor = false;
       // used hashMap to send parameters to this method. This makes it easier in the future to add new parameters if needed.
       if(parameters instanceof Map){
-        Map params = (Map) parameters;
+        //noinspection unchecked
+        Map<String, Object> params = (Map<String,Object>) parameters;
 
         if(params.containsKey("useSensor")){
           Boolean useSensorNullable = (Boolean) params.get("useSensor");

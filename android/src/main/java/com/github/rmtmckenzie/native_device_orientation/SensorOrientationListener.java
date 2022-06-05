@@ -46,6 +46,7 @@ public class SensorOrientationListener implements IOrientationListener {
             return;
         }
 
+        new OrientationEventListener()
         orientationEventListener = new OrientationEventListener(context, rate.nativeValue) {
             @Override
             public void onOrientationChanged(int angle) {
@@ -113,7 +114,6 @@ public class SensorOrientationListener implements IOrientationListener {
     }
 
     public int getDeviceDefaultOrientation() {
-
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         Configuration config = context.getResources().getConfiguration();

@@ -1,3 +1,8 @@
+## [1.1.3] - June 5, 2202
+
+* Fix sensos getOrientation on android (for real this time)
+* Make iOS keep last orientation if device is flat
+
 ## [1.1.2] - May 17, 2022
 
 * Fix direct sensor getOrientation on android
