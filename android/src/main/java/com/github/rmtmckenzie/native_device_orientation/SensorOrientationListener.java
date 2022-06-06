@@ -46,7 +46,6 @@ public class SensorOrientationListener implements IOrientationListener {
             return;
         }
 
-        new OrientationEventListener()
         orientationEventListener = new OrientationEventListener(context, rate.nativeValue) {
             @Override
             public void onOrientationChanged(int angle) {

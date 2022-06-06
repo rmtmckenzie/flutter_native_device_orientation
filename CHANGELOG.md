@@ -1,3 +1,7 @@
+## [1.1.4] - June 6, 2022
+
+* Fix bug stopping android from compiling
+
 ## [1.1.3] - June 5, 2202
 
 * Fix sensos getOrientation on android (for real this time)
