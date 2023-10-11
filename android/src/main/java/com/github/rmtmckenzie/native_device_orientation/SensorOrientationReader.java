@@ -24,7 +24,7 @@ public class SensorOrientationReader implements IOrientationListener.Orientation
             return;
         }
 
-        orientationListener = new SensorOrientationListener(context, this, SensorOrientationListener.Rate.fastest);
+        orientationListener = new SensorOrientationListener(context, this, SensorOrientationListener.Rate.ui);
         orientationListener.startOrientationListener();
     }
 

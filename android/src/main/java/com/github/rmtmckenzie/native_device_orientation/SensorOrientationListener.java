@@ -35,7 +35,7 @@ public class SensorOrientationListener implements IOrientationListener {
     }
 
     public SensorOrientationListener(Context context, OrientationCallback callback) {
-        this(context, callback, Rate.normal);
+        this(context, callback, Rate.ui);
     }
 
 
