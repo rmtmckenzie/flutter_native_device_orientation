@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.rmtmckenzie.native_device_orientation_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
    <application
         android:label="native_device_orientation_example"
         android:name="${applicationName}"

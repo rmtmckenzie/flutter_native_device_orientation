@@ -57,6 +57,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    namespace 'com.github.rmtmckenzie.native_device_orientation_example'
 }
 
 flutter {
