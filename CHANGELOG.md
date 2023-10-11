@@ -1,3 +1,7 @@
+## [1.1.5] - UNRELEASED
+
+* Add compatibility with AGP 8 (Android Gradle Plugin).
+
 ## [1.1.4] - June 6, 2022
 
 * Fix bug stopping android from compiling
