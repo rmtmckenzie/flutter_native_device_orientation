@@ -1,4 +1,4 @@
-## [1.1.5] - UNRELEASED
+## [1.2.0] - Oct 11, 2023
 
 * Add compatibility with AGP 8 (Android Gradle Plugin).
 
