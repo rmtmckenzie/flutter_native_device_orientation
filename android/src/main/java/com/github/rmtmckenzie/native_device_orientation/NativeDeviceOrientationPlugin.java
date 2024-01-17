@@ -117,10 +117,8 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin {
       };
 
       if(useSensor){
-        Log.i("NDOP", "listening using sensor listener");
         listener = new SensorOrientationListener(context, callback);
       }else{
-        Log.i("NDOP", "listening using window listener");
         listener = new OrientationListener(reader, context, callback);
       }
       listener.startOrientationListener();
