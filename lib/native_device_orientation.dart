@@ -4,29 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 enum NativeDeviceOrientation {
-  portraitUp,
-  portraitDown,
-  landscapeLeft,
-  landscapeRight,
-  unknown;
+  portraitUp(DeviceOrientation.portraitUp),
+  portraitDown(DeviceOrientation.portraitDown),
+  landscapeLeft(DeviceOrientation.landscapeLeft),
+  landscapeRight(DeviceOrientation.landscapeRight),
+  unknown(null);
 
-  const NativeDeviceOrientation();
+  const NativeDeviceOrientation(this.deviceOrientation);
 
-  /// Returns corresponding [DeviceOrientation] for this [NativeDeviceOrientation]
-  DeviceOrientation? get deviceOrientation {
-    switch (this) {
-      case NativeDeviceOrientation.portraitUp:
-        return DeviceOrientation.portraitUp;
-      case NativeDeviceOrientation.portraitDown:
-        return DeviceOrientation.portraitDown;
-      case NativeDeviceOrientation.landscapeLeft:
-        return DeviceOrientation.landscapeLeft;
-      case NativeDeviceOrientation.landscapeRight:
-        return DeviceOrientation.landscapeRight;
-      case NativeDeviceOrientation.unknown:
-        return null;
-    }
-  }
+  /// corresponding [DeviceOrientation] for this [NativeDeviceOrientation]
+  final DeviceOrientation? deviceOrientation;
 }
 
 class _OrientationStream {
