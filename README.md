@@ -16,6 +16,24 @@ landscape right (what you get from rotation an upright phone left or right).
 This isn't an issue for most applications, but when I was writing a plugin which displays
 a camera image, it became a problem as I need to know which way the screen is rotated.
 
+## Updating to 2.*
+
+Due to the objective c code being removed from the project, updating to 2.0 can sometimes
+result in a build error, something like the following:
+
+```
+Definition of 'NativeDeviceOrientationPlugin' must be imported from module 'nativeDeviceOrientation.Swift' before it is required
+```
+
+Unfortunately, this is a build-system issue and as such cannot be fixed easily by the developer. 
+To resolve the issue, you can simply follow these steps:
+
+- Update to flutter_native_device_orientation version 2.*
+- remove your Podfile.lock
+- run `flutter clean`
+- run `flutter build ios` or run for an iOS device
+
+
 ## UseSensor
 
 When using either the build-in widget or the plugin directly, there is an option you can pass in
