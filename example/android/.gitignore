@@ -4,11 +4,6 @@ gradle-wrapper.jar
 /gradlew
 /gradlew.bat
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/captures
 GeneratedPluginRegistrant.java
 
 # Remember to never publicly share your keystore.

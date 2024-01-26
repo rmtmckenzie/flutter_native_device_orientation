@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   bool useSensor = false;
 
   @override
@@ -16,33 +18,33 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: Text('Native Orientation Example'),
+            title: const Text('Native Orientation Example'),
             actions: <Widget>[
-              Center(child: Text('Sensor:')),
+              const Center(child: Text('Sensor:')),
               Switch(value: useSensor, onChanged: (val) => setState(() => useSensor = val)),
             ],
           ),
           body: NativeDeviceOrientedWidget(
             landscape: (context) {
-              return Center(child: Text('Native Orientation: Landscape (Unknown Side)\n'));
+              return const Center(child: Text('Native Orientation: Landscape (Unknown Side)\n'));
             },
             landscapeLeft: (context) {
-              return Center(child: Text('Native Orientation: Landscape Left\n'));
+              return const Center(child: Text('Native Orientation: Landscape Left\n'));
             },
             landscapeRight: (context) {
-              return Center(child: Text('Native Orientation: Landscape Right\n'));
+              return const Center(child: Text('Native Orientation: Landscape Right\n'));
             },
             portrait: (context) {
-              return Center(child: Text('Native Orientation: Portrait (Unknown Side)\n'));
+              return const Center(child: Text('Native Orientation: Portrait (Unknown Side)\n'));
             },
             portraitUp: (context) {
-              return Center(child: Text('Native Orientation: Portrait Up\n'));
+              return const Center(child: Text('Native Orientation: Portrait Up\n'));
             },
             portraitDown: (context) {
-              return Center(child: Text('Native Orientation: Portrait Down\n'));
+              return const Center(child: Text('Native Orientation: Portrait Down\n'));
             },
             fallback: (context) {
-              return Center(child: Text('Native Orientation: Unknown\n'));
+              return const Center(child: Text('Native Orientation: Unknown\n'));
             },
             useSensor: useSensor,
           ),
@@ -52,26 +54,28 @@ class _MyAppState extends State<MyApp> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   FloatingActionButton(
-                    child: Text('Sensor'),
+                    child: const Text('Sensor'),
                     onPressed: () async {
                       final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: true);
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Native Orientation read: $orientation'),
-                          duration: Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500),
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   FloatingActionButton(
-                    child: Text('UI'),
+                    child: const Text('UI'),
                     onPressed: () async {
                       final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: false);
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Native Orientation read: $orientation'),
-                          duration: Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500),
                         ),
                       );
                     },
