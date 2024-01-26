@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Plugin to retrieve native device orientation
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/rmtmckenzie/flutter_native_device_orientation'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'rmtmckenzie' => 'rmtmckenzie@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

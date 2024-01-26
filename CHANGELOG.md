@@ -1,3 +1,10 @@
+## [2.0.0] - Jan 26, 2023
+
+* Major refactoring of code, rebuilt project files from scratch. Should not change interface or what is exposed, but bumping major version
+  anyways just in case.
+* Stops deprecation & unsafe cast checks
+* Exposes DeviceOrientation through NativeDeviceOrientation
+
 ## [1.2.1] - Oct 16, 2023
 
 * Remove AppLifecycleState.hidden and use switch default instead
