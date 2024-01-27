@@ -36,9 +36,18 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
   // a value of type T?
   T? _ambiguate<T>(T? value) => value;
 
+  late Stream<NativeDeviceOrientation> orientationStream;
+  late bool streamUsesSensor;
+
+  void setupStream() {
+    orientationStream = deviceOrientationCommunicator.onOrientationChanged(useSensor: widget.useSensor);
+    streamUsesSensor = widget.useSensor;
+  }
+
   @override
   void initState() {
     super.initState();
+    setupStream();
     _ambiguate(WidgetsBinding.instance)?.addObserver(this);
   }
 
@@ -67,19 +76,26 @@ class NativeDeviceOrientationReaderState extends State<NativeDeviceOrientationRe
         deviceOrientationCommunicator.resume();
         break;
       case AppLifecycleState.detached:
-        // unused on iOS on Android the app will be suspended.
+        // unused on iOS, on Android the app will be suspended.
         break;
       default:
-        // ignoring AppLifecycleState.hidden as it is synthetic event on iOS/Androidq
+        // ignoring AppLifecycleState.hidden as it is synthetic event on iOS/Android
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.useSensor != streamUsesSensor) {
+      // this might theoretically be done communicator is paused, but realistically it shouldn't
+      // happen.
+      orientationStream = deviceOrientationCommunicator.onOrientationChanged(useSensor: widget.useSensor);
+      streamUsesSensor = widget.useSensor;
+    }
+
     return LayoutBuilder(builder: (context, constraints) {
       return StreamBuilder(
-        stream: deviceOrientationCommunicator.onOrientationChanged(useSensor: widget.useSensor),
+        stream: orientationStream,
         builder: (context, AsyncSnapshot<NativeDeviceOrientation> asyncResult) {
           if (asyncResult.connectionState == ConnectionState.waiting) {
             return OrientationBuilder(builder: (buildContext, orientation) {

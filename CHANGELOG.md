@@ -1,3 +1,8 @@
+## [2.0.2] - Jan 26, 2023
+* Fixed bug causing orientation widget to continually re-request the orientation 
+  stream every time the widget rebuilt.
+* Lowered android compile target to 33 as 34 isn't needed and caused warning
+
 ## [2.0.1] - Jan 26, 2023
 * Add information in README about updating to 2.*.
 

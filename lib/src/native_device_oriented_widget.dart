@@ -27,6 +27,7 @@ class NativeDeviceOrientedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NativeDeviceOrientationReader(
+      useSensor: useSensor,
       builder: (context) {
         final orientation = NativeDeviceOrientationReader.orientation(context);
 
@@ -53,7 +54,6 @@ class NativeDeviceOrientedWidget extends StatelessWidget {
             });
         }
       },
-      useSensor: useSensor,
     );
   }
 }

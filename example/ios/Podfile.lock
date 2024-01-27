@@ -21,7 +21,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 13825b8a9334a850581300559b8839134b124670
-  native_device_orientation: a8f34959caec83d6c674bd4947a9a5de7cc55fcd
+  native_device_orientation: 348b10c346a60ebbc62fb235a4fdb5d1b61a8f55
 
 PODFILE CHECKSUM: 9f7eea9d6ca88cd46f4792c528e42c66122012eb
 
