@@ -1,12 +1,15 @@
-## [2.0.2] - Jan 26, 2023
+## [2.0.3] - Feb 2, 2024
+* Fix crash on iOS resulting from returning void value
+
+## [2.0.2] - Jan 26, 2024
 * Fixed bug causing orientation widget to continually re-request the orientation 
   stream every time the widget rebuilt.
 * Lowered android compile target to 33 as 34 isn't needed and caused warning
 
-## [2.0.1] - Jan 26, 2023
+## [2.0.1] - Jan 26, 2024
 * Add information in README about updating to 2.*.
 
-## [2.0.0] - Jan 26, 2023
+## [2.0.0] - Jan 26, 2024
 
 * Major refactoring of code, rebuilt project files from scratch. Should not change interface or what is exposed, but bumping major version
   anyways just in case.
