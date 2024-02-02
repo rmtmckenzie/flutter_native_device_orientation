@@ -32,7 +32,8 @@ public class NativeDeviceOrientationPlugin: NSObject, FlutterPlugin {
     case "getOrientation":
       getOrientation(useSensor: argReader.bool(key: "useSensor") ?? false, result: result)
     case "pause":
-      result(pause())
+      pause()
+      result(nil)
     case "resume":
       result(resume())
     default:
