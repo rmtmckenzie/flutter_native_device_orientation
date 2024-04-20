@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:js_interop';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:native_device_orientation/src/native_device_orientation.dart';
 import 'package:native_device_orientation/src/native_device_orientation_platform_interface.dart';
@@ -85,9 +84,6 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
           );
         },
         handleError: (error, stackTrace, sink) {
-          debugPrint(
-            "Caught screen orientation error: $error - falling back to default orientation",
-          );
           sink.add(defaultOrientation);
         },
       ),
