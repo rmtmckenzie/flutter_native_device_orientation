@@ -27,6 +27,25 @@ NativeDeviceOrientation _fromString(String? orientationString) {
   }
 }
 
+NativeDeviceOrientation _fromInt(int? orientation) {
+  if (orientation == null) {
+    return NativeDeviceOrientation.unknown;
+  }
+
+  switch (orientation) {
+    case -90:
+      return NativeDeviceOrientation.landscapeRight;
+    case 0:
+      return NativeDeviceOrientation.portraitUp;
+    case 90:
+      return NativeDeviceOrientation.landscapeLeft;
+    case 180:
+      return NativeDeviceOrientation.portraitDown;
+    default:
+      return NativeDeviceOrientation.unknown;
+  }
+}
+
 /// Convert DeviceOrientationEvent to NativeDeviceOrientation
 NativeDeviceOrientation _fromDeviceOrientation(
   // The alpha angle is 0° when top of the device is pointed directly toward the Earth's north pole, and increases as the device is rotated counterclockwise.
@@ -40,20 +59,15 @@ NativeDeviceOrientation _fromDeviceOrientation(
   num gamma,
 ) {
   if (beta.abs() > gamma.abs()) {
-    return beta > 0
-        ? NativeDeviceOrientation.portraitUp
-        : NativeDeviceOrientation.portraitDown;
+    return beta > 0 ? NativeDeviceOrientation.portraitUp : NativeDeviceOrientation.portraitDown;
   } else {
-    return gamma > 0
-        ? NativeDeviceOrientation.landscapeRight
-        : NativeDeviceOrientation.landscapeLeft;
+    return gamma > 0 ? NativeDeviceOrientation.landscapeRight : NativeDeviceOrientation.landscapeLeft;
   }
 }
 
 class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
   // A broadcast stream controller to listen to screen-based orientation changes
-  final StreamController<NativeDeviceOrientation>
-      _screenOrientationStreamController =
+  final StreamController<NativeDeviceOrientation> _screenOrientationStreamController =
       StreamController<NativeDeviceOrientation>.broadcast();
 
   // A broadcast stream controller to listen to sensor-based orientation changes
@@ -65,8 +79,7 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
   }
 
   // Check if the browser supports the DeviceOrientationEvent
-  bool get _hasSensorSupport =>
-      globalContext.hasProperty('DeviceOrientationEvent'.toJS).toDart;
+  bool get _hasSensorSupport => globalContext.hasProperty('DeviceOrientationEvent'.toJS).toDart;
 
   NativeDeviceOrientationWeb() {
     // Set up the listeners for the stream controllers
@@ -93,14 +106,12 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
 
   // Starts listening to screen-based orientation changes
   void _startListenToScreenOrientationChanges() {
-    web.window.screen.orientation
-        .addEventListener('change', _onScreenOrientationChange.toJS);
+    web.window.screen.orientation.addEventListener('change', _onScreenOrientationChange.toJS);
   }
 
   // Stops listening to screen-based orientation changes
   void _stopListenToScreenOrientationChanges() {
-    web.window.screen.orientation
-        .removeEventListener('change', _onScreenOrientationChange.toJS);
+    web.window.screen.orientation.removeEventListener('change', _onScreenOrientationChange.toJS);
   }
 
   // A callback to listen to sensor-based orientation changes
@@ -118,12 +129,10 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
   /// Uses the [DeviceOrientationEvent](https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent)
   /// This feature is available only in secure contexts (HTTPS)
   Future<void> _startListenToSensorChanges() async {
-    final event =
-        globalContext.getProperty<JSObject>('DeviceOrientationEvent'.toJS);
+    final event = globalContext.getProperty<JSObject>('DeviceOrientationEvent'.toJS);
     // check if we need to ask for permission
     if (event.hasProperty('requestPermission'.toJS).toDart) {
-      final permission =
-          await event.callMethod<JSPromise>('requestPermission'.toJS).toDart;
+      final permission = await event.callMethod<JSPromise>('requestPermission'.toJS).toDart;
       if ((permission as JSString).toDart != 'granted') {
         _sensorStreamController.addError(
           'Permission denied for DeviceOrientationEvent',
@@ -141,23 +150,27 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
 
   /// Get the current screen-based orientation
   NativeDeviceOrientation _getCurrentOrientation() {
-    return _fromString(web.window.screen.orientation.type);
+    final screenOrientation = web.window.screen.getProperty("orientation".toJS);
+    if (screenOrientation != null) {
+      return _fromString(web.window.screen.orientation.type);
+    } else {
+      // probably on mobile safari, try to get orientation from window
+      final windowOrientation = web.window.getProperty("orientation".toJS);
+      return _fromInt((windowOrientation as JSNumber).toDartInt);
+    }
   }
 
   @override
   Stream<NativeDeviceOrientation> onOrientationChanged({
     bool useSensor = false,
-    NativeDeviceOrientation defaultOrientation =
-        NativeDeviceOrientation.portraitUp,
+    NativeDeviceOrientation defaultOrientation = NativeDeviceOrientation.portraitUp,
   }) {
     if (!useSensor || !_hasSensorSupport) {
       return _screenOrientationStreamController.stream.transform(
         StreamTransformer.fromHandlers(
           handleData: (data, sink) {
             sink.add(
-              data == NativeDeviceOrientation.unknown
-                  ? defaultOrientation
-                  : data,
+              data == NativeDeviceOrientation.unknown ? defaultOrientation : data,
             );
           },
           handleError: (error, stackTrace, sink) {
@@ -184,8 +197,7 @@ class NativeDeviceOrientationWeb extends NativeDeviceOrientationPlatform {
   @override
   Future<NativeDeviceOrientation> orientation({
     bool useSensor = false,
-    NativeDeviceOrientation defaultOrientation =
-        NativeDeviceOrientation.portraitUp,
+    NativeDeviceOrientation defaultOrientation = NativeDeviceOrientation.portraitUp,
   }) async {
     if (!useSensor || !_hasSensorSupport) {
       return _getCurrentOrientation();
