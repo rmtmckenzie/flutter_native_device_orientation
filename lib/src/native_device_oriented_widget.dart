@@ -41,15 +41,12 @@ class NativeDeviceOrientedWidget extends StatelessWidget {
           case NativeDeviceOrientation.portraitDown:
             return Builder(builder: portraitDown ?? portrait ?? fallback);
           case NativeDeviceOrientation.unknown:
-          default:
-            return OrientationBuilder(builder: (buildContext, orientation) {
+          return OrientationBuilder(builder: (buildContext, orientation) {
               switch (orientation) {
                 case Orientation.landscape:
                   return Builder(builder: landscape ?? fallback);
                 case Orientation.portrait:
                   return Builder(builder: portrait ?? fallback);
-                default:
-                  return Builder(builder: fallback);
               }
             });
         }

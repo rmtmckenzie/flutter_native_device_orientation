@@ -14,12 +14,16 @@ migrate_working_dir/
 *.iml
 *.ipr
 *.iws
-.idea/
+!/.idea/
+/.idea/**/*
 
-!.idea/codeStyles
-!.idea/codeStyles/*
-!.idea/runConfigurations
-!.idea/runConfigurations/*
+!/.idea/codeStyles
+!/.idea/codeStyles/*
+!/.idea/runConfigurations
+!/.idea/runConfigurations/*
+!/.idea/runConfigurations/example_lib_main_dart.xml
+!/.idea/codeStyles/Project.xml
+!/.idea/codeStyles/codeStyleConfig.xml
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -32,3 +36,4 @@ migrate_working_dir/
 **/doc/api/
 .dart_tool/
 build/
+!/.idea/codeStyles/codeStyleConfig.xml
