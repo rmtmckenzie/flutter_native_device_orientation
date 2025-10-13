@@ -1,3 +1,6 @@
+## [2.0.4] - Oct 13, 2025
+* Update android & gradle dependencies
+
 ## [2.0.3] - Feb 2, 2024
 * Fix crash on iOS resulting from returning void value
 
