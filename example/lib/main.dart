@@ -70,14 +70,24 @@ class MyAppState extends State<MyApp> {
                   FloatingActionButton(
                     child: const Text('UI'),
                     onPressed: () async {
-                      final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: false);
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      try {
+                        print("Requesting orientation");
+                        final orientation = await NativeDeviceOrientationCommunicator().orientation(useSensor: false);
+                        print("Done requesting orientation. Mounted: ${context.mounted}");
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Native Orientation read: $orientation'),
+                            duration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                      } catch (e) {
+                        print("Couldn't retrieve orientation: $e");
                         SnackBar(
-                          content: Text('Native Orientation read: $orientation'),
+                          content: Text("Couldn't retrieve orientation: $e"),
                           duration: const Duration(milliseconds: 500),
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                 ],

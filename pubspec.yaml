@@ -10,7 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   plugin_platform_interface: ^2.0.2
+  web: ">=0.4.0"
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +28,6 @@ flutter:
         pluginClass: NativeDeviceOrientationPlugin
       ios:
         pluginClass: NativeDeviceOrientationPlugin
+      web:
+        pluginClass: NativeDeviceOrientationWeb
+        fileName: src/native_device_orientation_web.dart
