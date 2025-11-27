@@ -1,3 +1,6 @@
+## [2.0.5] - Nov 26, 2025
+* Fix: leaked intent receiver (thanks @Soap-141)
+
 ## [2.0.4] - Oct 13, 2025
 * Update android & gradle dependencies
 
