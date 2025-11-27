@@ -39,6 +39,10 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin, MethodCallH
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    if (listener != null) {
+      listener.stopOrientationListener();
+      listener = null;
+    }
     channel.setMethodCallHandler(null);
     eventChannel.setStreamHandler(null);
   }
@@ -50,6 +54,10 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin, MethodCallH
 
   @Override
   public void onDetachedFromActivity() {
+    if (listener != null) {
+      listener.stopOrientationListener();
+      listener = null;
+    }
     this.activity = null;
   }
 
@@ -136,7 +144,9 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin, MethodCallH
 
   @Override
   public void onCancel(Object arguments) {
-    listener.stopOrientationListener();
-    listener = null;
+    if (listener != null) {
+      listener.stopOrientationListener();
+      listener = null;
+    }
   }
 }
