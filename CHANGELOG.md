@@ -1,3 +1,6 @@
+## [2.1.0] - Dec 7, 2025
+* Add support for Swift Package Manager
+
 ## [2.0.5] - Nov 26, 2025
 * Fix: leaked intent receiver (thanks @Soap-141)
 

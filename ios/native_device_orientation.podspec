@@ -13,7 +13,7 @@ Plugin to retrieve native device orientation
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'rmtmckenzie' => 'rmtmckenzie@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'native_device_orientation/Sources/native_device_orientation/**/*'
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
 

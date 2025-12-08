@@ -36,4 +36,3 @@ migrate_working_dir/
 **/doc/api/
 .dart_tool/
 build/
-!/.idea/codeStyles/codeStyleConfig.xml
