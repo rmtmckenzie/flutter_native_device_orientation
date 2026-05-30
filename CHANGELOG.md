@@ -1,3 +1,6 @@
+## [2.1.1] - May 30, 2026
+* Updates for most recent SPM changes
+
 ## [2.1.0] - Dec 7, 2025
 * Add support for Swift Package Manager
 
