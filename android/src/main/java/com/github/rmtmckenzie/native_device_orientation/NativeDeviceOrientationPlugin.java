@@ -129,8 +129,12 @@ public class NativeDeviceOrientationPlugin implements FlutterPlugin, MethodCallH
       }
     }
 
-    // initialize the callback. It is the same for both listeners.
-    IOrientationListener.OrientationCallback callback = orientation -> eventSink.success(orientation.name());
+    // The sensor listener can be restarted before Android reports its first
+    // orientation, so ignore that null startup value instead of crashing.
+    IOrientationListener.OrientationCallback callback = orientation -> {
+      if (orientation == null) return;
+      eventSink.success(orientation.name());
+    };
 
     if (useSensor) {
       Log.i("NDOP", "listening using sensor listener");
