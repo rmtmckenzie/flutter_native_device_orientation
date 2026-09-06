@@ -4,6 +4,14 @@
 
 This is a plugin project that allows for getting the native device orientation.
 
+## NOTE for Swift Package Manager
+
+After switching to Swift Package Manager, if you're going to run the example you have to 
+make sure that the folder name of the entire repository is "native_device_orientation" 
+rather than the default of flutter_native_device_orientation from when you do a clone.
+This is because in their infinite wisdom, Apple made the directory name the root source
+of naming rather than the Package.swift or something else.
+
 ## Why?
 
 Flutter provides a couple of way to get the 'orientation', but they all amount

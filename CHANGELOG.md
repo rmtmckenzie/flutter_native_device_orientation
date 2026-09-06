@@ -1,3 +1,7 @@
+## [2.1.2] - Sept 6, 2026
+* Bump SPM iOS version to 13 to fix xcode build with most recent flutter versions
+* Also bumped cocoapods version (not sure completely necessary but I'd rather be consistent)
+
 ## [2.1.1] - May 30, 2026
 * Updates for most recent SPM changes
 
