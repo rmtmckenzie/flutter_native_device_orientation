@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "native_device_orientation",
     platforms: [
-        .iOS("11.0")
+        .iOS("13.0")
     ],
     products: [
         .library(name: "native-device-orientation", targets: ["native_device_orientation"])
